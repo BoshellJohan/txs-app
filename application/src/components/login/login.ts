@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { AuthService } from '../../services/auth/auth.service';
+import { User } from '../../interfaces/user.models';
+
 
 @Component({
   selector: 'app-login',
@@ -8,12 +11,28 @@ import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angula
   styleUrl: './login.scss',
 })
 export class Login {
+  constructor(private authService: AuthService){}
+  user:User = {username: ''};
+
    userForm = new FormGroup({
     username: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required)
    })
 
    onSubmit(){
-    console.log("Se ha enviado el formulario");
-   }
+    if(this.userForm.invalid) return;
+    this.login();
+    }
+
+    login(){
+      this.authService.login(this.userForm.value as any)
+      .subscribe({
+        next: (res) => {
+          console.log("Respuesta: ", res);
+        },
+        error: (err) => {
+          console.log("Login error", err);
+        }
+      })
+    }
 }
