@@ -1,25 +1,9 @@
-const users = [
-    {
-        "username": "Parra", "password": "xxxx"
-    },
-    {
-        "username": "José", "password": "xxxx"
-    }
-]
+const users = [{_id: 123, email: "Parra", password: "xxxx", name: "Alejandro"}];
 
-function login(username, password){
-    const user = users.find((u) => u.username == username && u.password == password);
-
-    if(!user){
-        return {success: false};
-    }
-
-    return {
-        success: true,
-        user: {
-            username: user.username
-        }
-    }
+function findOne(email){
+    const user = users.find((u) => u.email == email);
+    if(!user) return null;
+    return user;
 }
 
-module.exports = {login};
+module.exports = {findOne};

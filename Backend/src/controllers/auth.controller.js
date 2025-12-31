@@ -1,20 +1,41 @@
+const jwt = require('jsonwebtoken');
+const bcrypt  = require('bcryptjs');
 const authService = require('../services/auth.service');
 
-function login(req, res){
-    const {username, password} = req.body;
-    const result = authService.login(username, password);
+async function login(req, res){
+    const {email, password} = req.body;
+    const user = authService.findOne(email);
 
-    if(!result.success){
+    if(!user){
         return res.status(401).json({
             success: false,
-            message: "Credenciales inválidas"
-        })
-    }
+            message: "Usuario no encontrado"
+        });
+    };
+
+    const validPassword = await bcrypt.compare(password, user.password);
+    if(!validPassword){
+        return res.status(401).json({
+            success: false,
+            message: "Contraseña incorrecta"
+        });
+    };
+
+    const token = jwt.sign(
+        { id: user._id, email: user.email},
+        process.env.SECRET_KEY,
+        { expiresIn: process.env.TOKEN_EXPIRATION }
+    )
 
     return res.status(200).json(
         {
             sucess: true,
-            user: result.user
+            user: {
+                id: user._id,
+                email: user.email,
+                name: user.name
+            },
+            token
         }
     )
 }
