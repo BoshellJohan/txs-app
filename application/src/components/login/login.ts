@@ -12,23 +12,23 @@ import { Router } from '@angular/router';
 })
 export class Login {
   constructor(private authService: AuthService, private router: Router){}
-  user:User = {username: ''};
+  user:User = {email: ''};
 
-   userForm = new FormGroup({
-    username: new FormControl('', Validators.required),
+   loginForm = new FormGroup({
+    email: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required)
    })
 
    onSubmit(){
-    if(this.userForm.invalid) return;
+    if(this.loginForm.invalid) return;
     this.login();
     }
 
     login(){
-      this.authService.login(this.userForm.value as any)
+      this.authService.login(this.loginForm.value as any)
       .subscribe({
         next: (res) => {
-          this.authService.saveUser(res.user);
+          this.authService.saveToken(res.token);
           this.router.navigate(['/dashboard']);
         },
         error: (err) => {

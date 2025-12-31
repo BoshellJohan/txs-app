@@ -1,13 +1,13 @@
 <div>
   <h2>Este es el Login</h2>
-  <form [formGroup]="userForm" (ngSubmit)="onSubmit()" #form="ngForm">
-    <label for="username">
-        <input type="text" title="username" id="username" placeholder="Usuario" formControlName="username"/>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" #form="ngForm">
+    <label for="email">
+        <input type="text" title="email" id="email" placeholder="Usuario" formControlName="email"/>
     </label>
     <label for="password">
         <input type="text" title="password" id="password" placeholder="Contraseña" formControlName="password"/>
     </label>
-    <!-- <button type="submit" [disabled]="!userForm.valid">Continuar</button> -->
+    <!-- <button type="submit" [disabled]="!loginForm.valid">Continuar</button> -->
     <button type="submit">Continuar</button>
   </form>
 </div>

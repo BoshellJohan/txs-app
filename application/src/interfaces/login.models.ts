@@ -1,5 +1,5 @@
 export interface LoginRequest {
-    username: string,
+    email: string,
     password: string
 }
 
@@ -7,7 +7,8 @@ export interface LoginResponse {
     success: boolean,
     user: {
         id?: string;
-        username: string;
+        email: string;
         password: string;
-    }
+    },
+    token: string,
 }
