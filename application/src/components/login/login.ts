@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth/auth.service';
 import { User } from '../../interfaces/user.models';
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -11,7 +11,7 @@ import { User } from '../../interfaces/user.models';
   styleUrl: './login.scss',
 })
 export class Login {
-  constructor(private authService: AuthService){}
+  constructor(private authService: AuthService, private router: Router){}
   user:User = {username: ''};
 
    userForm = new FormGroup({
@@ -28,7 +28,8 @@ export class Login {
       this.authService.login(this.userForm.value as any)
       .subscribe({
         next: (res) => {
-          console.log("Respuesta: ", res);
+          this.authService.saveUser(res.user);
+          this.router.navigate(['/dashboard']);
         },
         error: (err) => {
           console.log("Login error", err);

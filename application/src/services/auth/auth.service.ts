@@ -9,9 +9,9 @@ import { User } from '../../interfaces/user.models';
 })
 export class AuthService {
   constructor(private http: HttpClient){
-    const storedUser = sessionStorage.getItem('user'); //Revisar si hay sesión iniciada
-    if(storedUser){
-      this.userSubject.next(JSON.parse(storedUser));
+    const storedToken = sessionStorage.getItem('token'); //Revisar si hay sesión iniciada
+    if(storedToken){
+      //Consultar usuario
     }
   };
 
@@ -26,6 +26,14 @@ export class AuthService {
   saveUser(user: User): void {
     this.userSubject.next(user);
     sessionStorage.setItem('user', JSON.stringify(user));
+  }
+
+  getToken():string | null{
+    return sessionStorage.getItem('token');
+  }
+
+  saveToken(token:string): void {
+    sessionStorage.setItem('token', token);
   }
 
   logout(): void {
