@@ -30,7 +30,8 @@ export class Login {
           this.router.navigate(['/dashboard']);
         },
         error: (err) => {
-          console.log("Login error", err);
+          console.log("Login error", err.message);
+          console.log(err);
         }
       })
     }

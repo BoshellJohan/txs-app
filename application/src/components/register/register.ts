@@ -22,6 +22,7 @@ export class Register {
 
   onSubmit(){
     // if(this.registerForm.invalid) return;
+    console.log(this.registerForm.value)
     this.userService.signup(this.registerForm.value as any)
     .subscribe({
       next: (res) => {

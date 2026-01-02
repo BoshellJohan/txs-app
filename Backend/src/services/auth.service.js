@@ -1,9 +1,9 @@
-const users = [{_id: 123, email: "Parra", password: "xxxx", name: "Alejandro"}];
+const User = require('../models/user.model');
 
-function findOne(email){
-    const user = users.find((u) => u.email == email);
+async function findOne(email){
+    const user = await User.findOne({email});
     if(!user) return null;
-    return user;
+    return user.toObject();
 }
 
 module.exports = {findOne};

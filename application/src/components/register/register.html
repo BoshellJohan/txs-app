@@ -2,13 +2,13 @@
 <div>
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
         <label for="email">
-            <input type="email" title="email" id="email" placeholder="email" value="Parra@gmail.com">
+            <input type="email" title="email" id="email" placeholder="email" formControlName="email">
         </label>
         <label for="password">
-            <input type="password" title="password" id="password" placeholder="password" value="xxxx">
+            <input type="password" title="password" id="password" placeholder="password" formControlName="password">
         </label>
         <label for="name">
-            <input type="text" title="name" id="name" placeholder="name" value="Alejandro Parra">
+            <input type="text" title="name" id="name" placeholder="name" value="Alejandro Parra" formControlName="name">
         </label>
         <button type="submit">Crear cuenta</button>
     </form>
