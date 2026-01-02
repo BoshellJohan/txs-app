@@ -4,7 +4,7 @@ const authService = require('../services/auth.service');
 
 async function login(req, res){
     const {email, password} = req.body;
-    const user = await authService.findOne(email.toLowerCase());
+    const user = await authService.findUserToLogin(email.toLowerCase());
 
     if(!user){
         return res.status(401).json({
@@ -47,7 +47,7 @@ async function getUser(req, res){
         req.user = user;
     })
 
-    const user = await authService.findOne(req.user.email);
+    const user = await authService.findUserToLogin(req.user.email);
 
     if(!user) return res.status(400).json({message: "Error"});
     res.status(200).json({user, token});

@@ -36,7 +36,6 @@ export class AuthService {
 
   saveUser(user: User): void {
     this.userSubject.next(user);
-    sessionStorage.setItem('user', JSON.stringify(user));
   }
 
   getToken():string | null{
@@ -49,7 +48,7 @@ export class AuthService {
 
   logout(): void {
     this.userSubject.next(null);
-    sessionStorage.removeItem('user');
+    sessionStorage.removeItem('token');
   }
 
   isAuthenticated(){

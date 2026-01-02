@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-chat',
@@ -7,5 +8,5 @@ import { Component } from '@angular/core';
   styleUrl: './chat.scss',
 })
 export class Chat {
-
+  constructor(authService: AuthService){};
 }

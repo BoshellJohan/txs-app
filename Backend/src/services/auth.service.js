@@ -1,12 +1,9 @@
 const User = require('../models/user.model');
 
-async function findOne(email){
+async function findUserToLogin(email){
     const user = await User.findOne({email});
     if(!user) return null;
-
-    const userObject = user.toObject();
-    delete userObject.password;
-    return userObject;
+    return user.toObject();
 }
 
-module.exports = {findOne};
+module.exports = {findUserToLogin};
