@@ -40,4 +40,17 @@ async function login(req, res){
     )
 }
 
-module.exports = {login};
+async function getUser(req, res){
+    const { token } = req.body;
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+        if(err) return res.status(403).json({message: 'Token inválido'});
+        req.user = user;
+    })
+
+    const user = await authService.findOne(req.user.email);
+
+    if(!user) return res.status(400).json({message: "Error"});
+    res.status(200).json({user, token});
+}
+
+module.exports = {login, getUser};
