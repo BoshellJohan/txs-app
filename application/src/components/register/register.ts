@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from '../../services/user/user.service';
+import { AuthService } from '../../services/auth/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -10,7 +12,7 @@ import { UserService } from '../../services/user/user.service';
 })
 
 export class Register {
-  constructor(private userService: UserService){}
+  constructor(private userService: UserService, private authService: AuthService, private router: Router){}
 
   registerForm = new FormGroup({
     email: new FormControl('', Validators.required),
@@ -20,10 +22,12 @@ export class Register {
 
   onSubmit(){
     // if(this.registerForm.invalid) return;
-    console.log("Añadiendo usuario")
-    this.userService.addNewUser(this.registerForm.value as any)
+    this.userService.signup(this.registerForm.value as any)
     .subscribe({
-      next: (res) => console.log(res),
+      next: (res) => {
+        this.authService.saveToken(res.token);
+        this.router.navigate(['/dashboard']);
+      },
       error: (err) => console.log(err),
     })
   };

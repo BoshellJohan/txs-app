@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth/auth.service';
-import { User } from '../../interfaces/user.models';
 import { Router } from '@angular/router';
 
 @Component({
@@ -12,7 +11,6 @@ import { Router } from '@angular/router';
 })
 export class Login {
   constructor(private authService: AuthService, private router: Router){}
-  user:User = {email: ''};
 
    loginForm = new FormGroup({
     email: new FormControl('', Validators.required),
@@ -21,7 +19,7 @@ export class Login {
 
    onSubmit(){
     if(this.loginForm.invalid) return;
-    this.login();
+      this.login();
     }
 
     login(){

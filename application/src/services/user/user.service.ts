@@ -10,8 +10,7 @@ export class UserService {
   constructor(private http: HttpClient){}
   private apiURL = 'http://localhost:8080/register';
 
-  addNewUser(credentials: RegisterRequest): Observable<RegisterResponse>{
-      return this.http.post<RegisterResponse>(`${this.apiURL}/addNewUser`, credentials);
+  signup(credentials: RegisterRequest): Observable<RegisterResponse>{
+      return this.http.post<RegisterResponse>(`${this.apiURL}/signup`, credentials);
   }
-
 }

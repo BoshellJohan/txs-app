@@ -1,3 +1,5 @@
+import { User } from "./user.models"
+
 export interface RegisterRequest {
     email: string,
     password: string,
@@ -6,5 +8,6 @@ export interface RegisterRequest {
 
 export interface RegisterResponse {
     success: boolean,
-    token: string
+    token: string,
+    user: User
 }
