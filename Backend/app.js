@@ -1,8 +1,10 @@
+require('dotenv').config();
 const cors = require('cors');
 const express = require('express');
 const authRouter = require('./src/routes/auth.routes');
+const registerRouter = require('./src/routes/register.routes');
 const { authMiddleware } = require('./src/middlewares/auth.middleware');
-require('dotenv').config();
+const connectDB = require('./src/config/db');
 
 const app = express();
 
@@ -12,8 +14,10 @@ app.use(cors({
 }))
 
 app.use(express.json());
+connectDB();
 
 app.use('/auth', authRouter);
+app.use('/register', registerRouter);
 
 app.get('/dashboard', authMiddleware, (req, res) => {
     res.json({message: 'Ruta protegida', user: req.user})
