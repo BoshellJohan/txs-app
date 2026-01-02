@@ -3,15 +3,22 @@ import { Injectable, OnInit } from '@angular/core';
 import { LoginRequest, LoginResponse } from '../../interfaces/login.models';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { User } from '../../interfaces/user.models';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private http: HttpClient){
+  constructor(private http: HttpClient, private router: Router){
     const storedToken = sessionStorage.getItem('token'); //Revisar si hay sesión iniciada
     if(storedToken){
-      //Consultar usuario
+      this.getUser(storedToken).subscribe({
+        next: (res) => {
+          this.saveUser(res);
+          this.router.navigate(['/dashboard']);
+        },
+        error: (err) =>  console.log(err),
+      })
     }
   };
 
@@ -21,6 +28,10 @@ export class AuthService {
 
   login(credentials: LoginRequest): Observable<LoginResponse>{
     return this.http.post<LoginResponse>(`${this.apiURL}/login`, credentials);
+  }
+
+  getUser(token: string): Observable<User>{
+    return this.http.post<User>(`${this.apiURL}/getuser`, { token });
   }
 
   saveUser(user: User): void {
