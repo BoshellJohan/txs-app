@@ -3,41 +3,32 @@ const bcrypt  = require('bcryptjs');
 const authService = require('../services/auth.service');
 
 async function login(req, res){
-    const {email, password} = req.body;
-    const user = await authService.findUserToLogin(email.toLowerCase());
+    try{
+        const {email, password} = req.body;
+        const user = await authService.login(email, password);
 
-    if(!user){
-        return res.status(401).json({
-            success: false,
-            message: "Usuario no encontrado"
-        });
-    };
-
-    const validPassword = await bcrypt.compare(password, user.password);
-    if(!validPassword){
-        return res.status(401).json({
-            success: false,
-            message: "Contraseña incorrecta"
-        });
-    };
-
-    const token = jwt.sign(
+        const token = jwt.sign(
         { id: user._id, email: user.email},
         process.env.JWT_SECRET,
         { expiresIn: process.env.TOKEN_EXPIRATION }
-    )
+        )
 
-    return res.status(200).json(
-        {
-            sucess: true,
-            user: {
-                id: user._id,
-                email: user.email,
-                name: user.name
-            },
-            token
+        return res.status(200).json({
+            token,
+            user
+        });
+    } catch(err){
+        if(err.message == 'INVALID_CREDENTIALS'){
+            return res.status(401).json({
+                message: 'INVALID CREDENTIALS',
+            })
         }
-    )
+
+        return res.status(500).json({
+            message: 'ERROR WHILE LOGING',
+        })
+    }
+
 }
 
 async function getUser(req, res){
@@ -47,7 +38,7 @@ async function getUser(req, res){
         req.user = user;
     })
 
-    const user = await authService.findUserToLogin(req.user.email);
+    const user = await authService.getUser(req.user.email);
 
     if(!user) return res.status(400).json({message: "Error"});
     res.status(200).json({user, token});
