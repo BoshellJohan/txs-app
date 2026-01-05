@@ -10,16 +10,7 @@ import { Router } from '@angular/router';
 })
 export class AuthService {
   constructor(private http: HttpClient, private router: Router){
-    const storedToken = sessionStorage.getItem('token'); //Revisar si hay sesión iniciada
-    if(storedToken){
-      this.getUser(storedToken).subscribe({
-        next: (res) => {
-          this.saveUser(res);
-          this.router.navigate(['/dashboard']);
-        },
-        error: (err) =>  console.log(err),
-      })
-    }
+    this.loadTokenFromSessionStorage();
   };
 
   private apiURL = 'http://localhost:8080/auth'
@@ -53,5 +44,18 @@ export class AuthService {
 
   isAuthenticated(){
     return this.userSubject.value !== null;
+  }
+
+  loadTokenFromSessionStorage(){
+    const storedToken = sessionStorage.getItem('token');
+    if(storedToken){
+      this.getUser(storedToken).subscribe({
+        next: (res) => {
+          this.saveUser(res);
+          this.router.navigate(['/dashboard']);
+        },
+        error: (err) =>  console.log(err),
+      })
+    }
   }
 }
