@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth/auth.service';
 import { Router } from '@angular/router';
+import { TokenService } from '../../services/token/token.service';
 
 @Component({
   selector: 'app-login',
@@ -10,7 +11,7 @@ import { Router } from '@angular/router';
   styleUrl: './login.scss',
 })
 export class Login {
-  constructor(private authService: AuthService, private router: Router){}
+  constructor(private authService: AuthService, private tokenService: TokenService, private router: Router){}
 
    loginForm = new FormGroup({
     email: new FormControl('', Validators.required),
@@ -26,7 +27,7 @@ export class Login {
       this.authService.login(this.loginForm.value as any)
       .subscribe({
         next: (res) => {
-          this.authService.saveToken(res.token);
+          this.tokenService.setToken(res.token);
           this.authService.saveUser(res.user as any);
           this.router.navigate(['/dashboard']);
         },

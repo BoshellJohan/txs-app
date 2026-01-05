@@ -3,6 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { UserService } from '../../services/user/user.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { Router } from '@angular/router';
+import { TokenService } from '../../services/token/token.service';
 
 @Component({
   selector: 'app-register',
@@ -12,7 +13,7 @@ import { Router } from '@angular/router';
 })
 
 export class Register {
-  constructor(private userService: UserService, private authService: AuthService, private router: Router){}
+  constructor(private userService: UserService, private authService: AuthService, private tokenService: TokenService, private router: Router){}
 
   registerForm = new FormGroup({
     email: new FormControl('', Validators.required),
@@ -22,11 +23,10 @@ export class Register {
 
   onSubmit(){
     // if(this.registerForm.invalid) return;
-    console.log(this.registerForm.value)
     this.userService.signup(this.registerForm.value as any)
     .subscribe({
       next: (res) => {
-        this.authService.saveToken(res.token);
+        this.tokenService.setToken(res.token);
         this.authService.saveUser(res.user);
         this.router.navigate(['/dashboard']);
       },
