@@ -27,6 +27,7 @@ export class Register {
     .subscribe({
       next: (res) => {
         this.authService.saveToken(res.token);
+        this.authService.saveUser(res.user);
         this.router.navigate(['/dashboard']);
       },
       error: (err) => console.log(err),
