@@ -26,8 +26,6 @@ export class Register {
     this.userService.signup(this.registerForm.value as any)
     .subscribe({
       next: (res) => {
-        this.tokenService.setToken(res.token);
-        this.authService.saveUser(res.user);
         this.router.navigate(['/dashboard']);
       },
       error: (err) => console.log(err),

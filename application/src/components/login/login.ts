@@ -27,13 +27,10 @@ export class Login {
       this.authService.login(this.loginForm.value as any)
       .subscribe({
         next: (res) => {
-          this.tokenService.setToken(res.token);
-          this.authService.saveUser(res.user as any);
           this.router.navigate(['/dashboard']);
         },
         error: (err) => {
-          console.log("Login error", err.message);
-          console.log(err);
+          console.log("Login error", err);
         }
       })
     }
