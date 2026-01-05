@@ -18,6 +18,10 @@ export class TokenService {
         sessionStorage.removeItem('token');
     }
 
+    hasToken(){
+        return !!this.getToken();
+    }
+
     loadTokenFromSessionStorage(){
     const storedToken = sessionStorage.getItem('token');
 
