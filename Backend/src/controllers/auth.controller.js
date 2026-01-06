@@ -1,23 +1,24 @@
 const jwt = require('jsonwebtoken');
-const bcrypt  = require('bcryptjs');
 const authService = require('../services/auth.service');
+const jwtUtils = require('../utils/jwt.utils');
+const userService = require('../services/user/user.service');
 
 async function login(req, res){
     try{
         const {email, password} = req.body;
         const user = await authService.login(email, password);
 
-        const token = jwt.sign(
-        { id: user._id, email: user.email},
-        process.env.JWT_SECRET,
-        { expiresIn: process.env.TOKEN_EXPIRATION }
-        )
+        const accessToken = jwtUtils.generateAccessToken(user);
+        const refreshToken = jwtUtils.generateRefreshToken(user);
+        await userService.updateRefreshToken(user.email, refreshToken);
 
         return res.status(200).json({
-            token,
+            accessToken,
+            refreshToken,
             user
         });
     } catch(err){
+        console.log(err, err.message)
         if(err.message == 'INVALID_CREDENTIALS'){
             return res.status(401).json({
                 message: 'INVALID CREDENTIALS',
@@ -36,14 +37,13 @@ async function signup(req, res){
 
     try {
         const user = await authService.signup(email, password, name);
-        const token = jwt.sign(
-            { id: user._id, email: user.email},
-            process.env.JWT_SECRET,
-            { expiresIn: process.env.TOKEN_EXPIRATION }
-        );
+        const accessToken = jwtUtils.generateAccessToken(user);
+        const refreshToken = jwtUtils.generateRefreshToken(user);
+        await userService.updateRefreshToken(user.email, refreshToken);
 
         return res.status(200).json({
-            token,
+            accessToken,
+            refreshToken,
             user
         });
 
