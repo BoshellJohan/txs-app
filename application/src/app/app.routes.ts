@@ -20,9 +20,10 @@ export const routes: Routes = [
     {
         path: 'dashboard',
         canActivate: [AuthGuard],
-        loadComponent: ():any => {
-            import('../components/chat/chat')
-            .then(m => m.Chat);
-        }
+        component: Chat
+        // loadComponent: ():any => {
+        //     import('../components/chat/chat')
+        //     .then(m => m.Chat);
+        // }
     },
 ];

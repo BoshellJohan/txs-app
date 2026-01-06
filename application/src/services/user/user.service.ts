@@ -20,4 +20,8 @@ export class UserService {
         })
       );
   }
+
+  getProfile(){
+    return this.http.get('http://localhost:8080/dashboard');
+  }
 }
