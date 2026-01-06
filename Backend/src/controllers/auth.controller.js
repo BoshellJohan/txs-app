@@ -31,6 +31,31 @@ async function login(req, res){
 
 }
 
+async function signup(req, res){
+    const { email, password, name } = req.body;
+
+    try {
+        const user = await authService.signup(email, password, name);
+        const token = jwt.sign(
+            { id: user._id, email: user.email},
+            process.env.JWT_SECRET,
+            { expiresIn: process.env.TOKEN_EXPIRATION }
+        );
+
+        return res.status(200).json({
+            token,
+            user
+        });
+
+    } catch(err){
+        if(err.message === 'EMAIL_EXISTS'){
+            return res.status(409).json({
+                message: "Credenciales existentes en DB"
+            })
+        }
+    }
+}
+
 async function getUser(req, res){
     const { token } = req.body;
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
@@ -44,4 +69,4 @@ async function getUser(req, res){
     res.status(200).json({user, token});
 }
 
-module.exports = {login, getUser};
+module.exports = {login, signup, getUser};

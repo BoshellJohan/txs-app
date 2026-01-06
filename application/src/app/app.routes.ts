@@ -19,7 +19,6 @@ export const routes: Routes = [
     },
     {
         path: 'dashboard',
-        component: Chat,
         canActivate: [AuthGuard],
         loadComponent: ():any => {
             import('../components/chat/chat')
