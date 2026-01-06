@@ -20,7 +20,7 @@ async function login(email, password){
     return userObject;
 }
 
-async function signup(email, password, name){
+async function signup(email, password, name, refreshToken){
     const existingUser = await User.findOne({email});
 
     if(existingUser){
@@ -28,10 +28,12 @@ async function signup(email, password, name){
     }
 
     const hashPassword = await bcrypt.hash(password, 10);
+    const hashToken = await bcrypt.hash(refreshToken, 10);
 
     const user = new User({
         email: email,
         password: hashPassword,
+        refreshToken: hashToken,
         name: name
     })
 
