@@ -20,12 +20,11 @@ export class TokenService {
         if(refreshToken) sessionStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
     }
 
-    clearToken(){
+    clearTokens(){
         sessionStorage.clear();
     }
 
     hasToken(){
         return !!this.getAccessToken();
     }
-
 }

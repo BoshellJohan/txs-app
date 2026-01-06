@@ -33,11 +33,19 @@ export class AuthService {
     this.userSubject.next(user);
   }
 
-  logout(): void {
-    this.userSubject.next(null);
-  }
+  // logout(): void {
+  //   this.userSubject.next(null);
+  // }
 
   isAuthenticated(){
     return this.userSubject.value !== null;
+  }
+
+  refreshToken(refreshToken: string): Observable<{accessToken: string}>{
+    return this.http.post<{accessToken: string}>(`${this.apiURL}/refresh`, {refreshToken});
+  }
+
+  logout(refreshToken: string){
+    return this.http.post(`${this.apiURL}/logout`, {refreshToken});
   }
 }
