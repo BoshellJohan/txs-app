@@ -10,5 +10,6 @@ export interface LoginResponse {
         email: string;
         password: string;
     },
-    token: string,
+    accessToken: string,
+    refreshToken: string,
 }

@@ -19,7 +19,7 @@ export class AuthService {
   login(credentials: LoginRequest): Observable<LoginResponse>{
     return this.http.post<LoginResponse>(`${this.apiURL}/login`, credentials).pipe(
       tap(res => {
-        this.tokenService.setToken(res.token);
+        this.tokenService.saveTokens(res.accessToken, res.refreshToken);
         this.saveUser(res.user as any);
       })
     );

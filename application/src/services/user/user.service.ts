@@ -15,7 +15,7 @@ export class UserService {
   signup(credentials: RegisterRequest): Observable<RegisterResponse>{
       return this.http.post<RegisterResponse>(`${this.apiURL}/signup`, credentials).pipe(
         tap(res => {
-          this.tokenService.setToken(res.token);
+          this.tokenService.saveTokens(res.accessToken, res.refreshToken);
           this.authService.saveUser(res.user);
         })
       );

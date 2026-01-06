@@ -8,6 +8,7 @@ export interface RegisterRequest {
 
 export interface RegisterResponse {
     success: boolean,
-    token: string,
+    accessToken: string,
+    refreshToken: string,
     user: User
 }

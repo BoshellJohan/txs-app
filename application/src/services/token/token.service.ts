@@ -2,31 +2,30 @@ import { Injectable } from '@angular/core';
 
 @Injectable({providedIn: 'root'})
 export class TokenService {
-    constructor() {
-        this.loadTokenFromSessionStorage();
+    private ACCESS_TOKEN_KEY = 'access_token';
+    private REFRESH_TOKEN_KEY = 'refresh_token';
+
+    constructor(){}
+
+    getAccessToken(): string | null {
+        return sessionStorage.getItem(this.ACCESS_TOKEN_KEY);
     }
 
-    getToken(){
-        return sessionStorage.getItem('token');
+    getRefreshToken(): string | null{
+        return sessionStorage.getItem(this.REFRESH_TOKEN_KEY);
     }
 
-    setToken(token: string){
-        sessionStorage.setItem('token', token);
+    saveTokens(accessToken: string, refreshToken?:string): void{
+        sessionStorage.setItem(this.ACCESS_TOKEN_KEY, accessToken);
+        if(refreshToken) sessionStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
     }
 
     clearToken(){
-        sessionStorage.removeItem('token');
+        sessionStorage.clear();
     }
 
     hasToken(){
-        return !!this.getToken();
+        return !!this.getAccessToken();
     }
 
-    loadTokenFromSessionStorage(){
-    const storedToken = sessionStorage.getItem('token');
-
-    if(!storedToken) return;
-
-    this.setToken(storedToken);
-  }
 }
