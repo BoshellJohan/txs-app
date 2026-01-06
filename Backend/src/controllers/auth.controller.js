@@ -10,7 +10,7 @@ async function login(req, res){
 
         const accessToken = jwtUtils.generateAccessToken(user);
         const refreshToken = jwtUtils.generateRefreshToken(user);
-        await userService.updateRefreshToken(user.email, refreshToken);
+        await userService.addRefreshToken(user.email, refreshToken);
 
         return res.status(200).json({
             accessToken,
@@ -18,7 +18,6 @@ async function login(req, res){
             user
         });
     } catch(err){
-        console.log(err, err.message)
         if(err.message == 'INVALID_CREDENTIALS'){
             return res.status(401).json({
                 message: 'INVALID CREDENTIALS',
@@ -37,9 +36,9 @@ async function signup(req, res){
 
     try {
         const user = await authService.signup(email, password, name);
-        const accessToken = jwtUtils.generateAccessToken(user);
         const refreshToken = jwtUtils.generateRefreshToken(user);
-        await userService.updateRefreshToken(user.email, refreshToken);
+        await userService.addRefreshToken(user.email, refreshToken);
+        const accessToken = jwtUtils.generateAccessToken(user);
 
         return res.status(200).json({
             accessToken,
@@ -56,6 +55,30 @@ async function signup(req, res){
     }
 }
 
+async function refresh(req, res){
+    const { refreshToken } = req.body;
+    if(!refreshToken) return res.status(401).json({message: 'Refresh token required'});
+
+    try {
+        const user = await userService.getUserByRefreshToken(refreshToken);
+        const newAccessToken = jwtUtils.generateAccessToken(user);
+
+        return res.status(200).json({
+            accessToken: newAccessToken
+        })
+    } catch(err){
+        if(err.message == 'INVALID_TOKEN'){
+            return res.status(401).json({message: "Refresh token inválido"});
+        }
+    }
+}
+
+async function logout(req, res){
+    const { refreshToken } = req.body;
+    await userService.clearRefreshToken(refreshToken);
+    res.sendStatus(204);
+}
+
 async function getUser(req, res){
     const { token } = req.body;
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
@@ -69,4 +92,4 @@ async function getUser(req, res){
     res.status(200).json({user, token});
 }
 
-module.exports = {login, signup, getUser};
+module.exports = {login, signup, refresh, logout, getUser};

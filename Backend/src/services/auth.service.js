@@ -16,11 +16,12 @@ async function login(email, password){
 
     const userObject = user.toObject();
     delete userObject.password;
+    delete userObject.refreshTokens;
 
     return userObject;
 }
 
-async function signup(email, password, name, refreshToken){
+async function signup(email, password, name){
     const existingUser = await User.findOne({email});
 
     if(existingUser){
@@ -28,12 +29,10 @@ async function signup(email, password, name, refreshToken){
     }
 
     const hashPassword = await bcrypt.hash(password, 10);
-    const hashToken = await bcrypt.hash(refreshToken, 10);
 
     const user = new User({
         email: email,
         password: hashPassword,
-        refreshToken: hashToken,
         name: name
     })
 
