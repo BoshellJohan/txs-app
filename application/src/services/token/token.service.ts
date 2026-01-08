@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({providedIn: 'root'})
 export class TokenService {
     private ACCESS_TOKEN_KEY = 'access_token';
     private REFRESH_TOKEN_KEY = 'refresh_token';
+    private accessTokenSubject = new BehaviorSubject<string | null>(null);
 
     constructor(){}
 
@@ -26,5 +28,18 @@ export class TokenService {
 
     hasToken(){
         return !!this.getAccessToken();
+    }
+
+    //Funciones para el BehaviorSubject
+    get accessToken$(): Observable<string | null>{
+        return this.accessTokenSubject.asObservable();
+    }
+
+    emitNewAccessToken(token:string){
+        this.accessTokenSubject.next(token);
+    }
+
+    clearAccessStream(){
+        this.accessTokenSubject.next(null);
     }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpEvent, HttpHandler, HttpRequest, HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import { catchError, Observable, switchMap, throwError } from 'rxjs';
+import { catchError, filter, Observable, switchMap, take, throwError } from 'rxjs';
 import { AuthService } from '../services/auth/auth.service';
 import { Router } from '@angular/router';
 import { TokenService } from '../services/token/token.service';
@@ -19,31 +19,51 @@ export class ErrorInterceptor implements HttpInterceptor {
         }
 
         const refreshToken = this.tokenService.getRefreshToken();
-        if(!refreshToken || this.isRefreshing){
+        if(!refreshToken){
           this.tokenService.clearTokens();
           return throwError(() => error);
         }
 
-        this.isRefreshing = true;
+        //Caso para requests concurridas: Primer 401 -> Inicia Refresh
+        if(!this.isRefreshing){
+          this.isRefreshing = true;
+          this.tokenService.clearAccessStream();
 
-        return this.authService.refreshToken(refreshToken).pipe(
-          switchMap((res) => {
-            this.isRefreshing = false;
-            this.tokenService.saveTokens(res.accessToken);
+          return this.authService.refreshToken(refreshToken).pipe(
+            switchMap(res => {
+              this.isRefreshing = false;
+              this.tokenService.saveTokens(res.accessToken);
+              this.tokenService.emitNewAccessToken(res.accessToken);
 
-            const retryReq = req.clone({
-              setHeaders: {
-                Authorization: `Bearer ${res.accessToken}`,
-              }
+              const retryReq = req.clone({
+                setHeaders: {
+                  Authorization: `Bearer ${res.accessToken}`
+                }
+              });
+
+              return next.handle(retryReq);
+            }),
+            catchError(err => {
+              this.isRefreshing = false;
+              this.tokenService.clearTokens();
+              this.tokenService.clearAccessStream();
+              return throwError(() => err);
             })
+          )
+        }
 
-            return next.handle(retryReq)
-          }),
+        //Se está ejecutando un refresh en éste momento -> esperar
+        return this.tokenService.accessToken$.pipe(
+          filter(token => token !== null),
+          take(1),
+          switchMap(token => {
+              const retryReq = req.clone({
+              setHeaders: {
+                Authorization: `Bearer ${token!}`
+              }
+            });
 
-          catchError(err => {
-            this.isRefreshing = false;
-            this.tokenService.clearTokens();
-            return throwError(() => err);
+            return next.handle(retryReq);
           })
         )
       })
