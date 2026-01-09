@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { UserService } from '../../services/user/user.service';
-import { AuthService } from '../../services/auth/auth.service';
 import { Router } from '@angular/router';
-import { TokenService } from '../../services/token/token.service';
+import { AuthService } from '@/core/services/auth/auth.service';
+import { TokenService } from '@/core/services/token/token.service';
+import { UserService } from '@/core/services/user/user.service';
 
 @Component({
   selector: 'app-register',

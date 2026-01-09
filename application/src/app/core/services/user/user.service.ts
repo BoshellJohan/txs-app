@@ -1,9 +1,9 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { RegisterRequest, RegisterResponse } from '../../interfaces/register.models';
+import { HttpClient } from '@angular/common/http';
+import { RegisterRequest, RegisterResponse } from '@/shared/interfaces/register.models';
+import { AuthService } from '@/core/services/auth/auth.service';
+import { TokenService } from '@/core/services/token/token.service';
 import { Observable, tap } from 'rxjs';
-import { TokenService } from '../token/token.service';
-import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root',

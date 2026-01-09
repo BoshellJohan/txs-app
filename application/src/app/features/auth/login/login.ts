@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
-import { AuthService } from '../../services/auth/auth.service';
+import { AuthService } from '@/core/services/auth/auth.service';
 import { Router } from '@angular/router';
-import { TokenService } from '../../services/token/token.service';
+import { TokenService } from '@/core/services/token/token.service';
 
 @Component({
   selector: 'app-login',

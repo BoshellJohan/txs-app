@@ -1,10 +1,10 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
-import { LoginRequest, LoginResponse } from '../../interfaces/login.models';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { User } from '../../interfaces/user.models';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { TokenService } from '../token/token.service';
+import { LoginRequest, LoginResponse } from '@/shared/interfaces/login.models';
+import { TokenService } from '@/core/services/token/token.service';
+import { User } from '@/shared/interfaces/user.models';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',

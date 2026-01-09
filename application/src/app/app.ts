@@ -1,5 +1,4 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { AuthService } from '../services/auth/auth.service';
 import { RouterOutlet } from '@angular/router';
 @Component({
   selector: 'app-root',

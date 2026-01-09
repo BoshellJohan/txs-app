@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
-import { Login } from '../components/login/login';
-import { Chat } from '../components/chat/chat';
-import { AuthGuard } from '../guards/auth-guard';
-import { Register } from '../components/register/register';
+import { AuthGuard } from '@/core/guards/auth-guard';
+import { Login } from '@/features/auth/login/login';
+import { Chat } from '@/features/dashboard/chat/chat';
+import { Register } from '@/features/auth/register/register';
 
 export const routes: Routes = [
     {
