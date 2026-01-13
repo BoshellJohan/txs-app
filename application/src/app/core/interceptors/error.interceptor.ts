@@ -45,6 +45,7 @@ export class ErrorInterceptor implements HttpInterceptor {
             }),
             catchError(err => {
               this.isRefreshing = false;
+              this.authService.logout(refreshToken);
               this.tokenService.clearTokens();
               this.tokenService.clearAccessStream();
               return throwError(() => err);

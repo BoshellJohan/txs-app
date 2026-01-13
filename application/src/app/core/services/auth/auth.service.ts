@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { LoginRequest, LoginResponse } from '@/shared/interfaces/login.models';
 import { TokenService } from '@/core/services/token/token.service';
 import { User } from '@/shared/interfaces/user.models';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap, of, catchError, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -36,10 +36,6 @@ export class AuthService {
     return this.userSubject.asObservable();
   }
 
-  // logout(): void {
-  //   this.userSubject.next(null);
-  // }
-
   isAuthenticated(){
     return this.userSubject.value !== null;
   }
@@ -49,6 +45,28 @@ export class AuthService {
   }
 
   logout(refreshToken: string){
-    return this.http.post(`${this.apiURL}/logout`, {refreshToken});
+    return this.http.post(`${this.apiURL}/logout`, {refreshToken}).pipe(
+      tap(() => {
+        this.userSubject.next(null);
+        this.router.navigate(['/auth']);
+      })
+    );
+  }
+
+  rehydrateSession(): Observable<void> {
+    const token = this.tokenService.getAccessToken();
+    if(!token) return of(void 0);
+
+    return this.http.get<User>(`${this.apiURL}/me`).pipe(
+      tap(user => {
+        if(user) this.saveUser(user);
+        console.log(this.userSubject.value);
+      }),
+      catchError(() => {
+        this.tokenService.clearTokens();
+        return of(void 0);
+      }),
+      map(() => void 0)
+    );
   }
 }
