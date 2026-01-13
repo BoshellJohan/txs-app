@@ -27,7 +27,10 @@ const userSchema = new mongoose.Schema({
             token: String,
             createdAt: { type: Date, default: Date.now }
         }
-    ]
+    ],
+    passwordRecoveryToken: {
+        type: String
+    }
 }, {
     timestamps: true
 });

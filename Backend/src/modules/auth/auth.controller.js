@@ -89,6 +89,19 @@ async function logout(req, res){
     res.sendStatus(204);
 }
 
+async function forgotPassword(req, res){
+    const { email } = req.body;
+    try {
+        const tempToken = await authService.forgotPassword(email);
+        // const res = await emailService.recoveryPassword(tempToken, email);
+    } catch(err){
+        console.log(err)
+        return res.status(500).json({success: false, message: "Error recuperando la contraseña"});
+    }
+}
+
+
+
 async function getUser(req, res){
     const { refreshToken } = req.body;
     const user = await userService.getUserByRefreshToken(refreshToken);
@@ -97,4 +110,4 @@ async function getUser(req, res){
     res.status(200).json({success: true, user});
 }
 
-module.exports = {login, signup, refresh, logout, getUser};
+module.exports = {forgotPassword, login, signup, refresh, logout, getUser};
