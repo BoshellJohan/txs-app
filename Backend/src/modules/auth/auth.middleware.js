@@ -1,16 +1,24 @@
 const jwt = require('jsonwebtoken');
+const authService = require('./auth.service');
 
-function authMiddleware(req, res, next){
+async function authMiddleware(req, res, next){
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
-    if(!token) return res.status(401).json({message: 'Token requerido'});
+    if(!token) return res.status(401).json({message: 'Token required'});
 
-    jwt.verify(token, process.env.JWT_ACCESS, (err, user) => {
-        if(err) return res.status(401).json({message: 'Token inválido'});
+    try {
+        const payload = jwt.verify(token, process.env.JWT_ACCESS);
+        const user = await authService.getUser(payload.email);
+        if(!user) return res.status(401).json({message: 'User not found'});
+
         req.user = user;
         next();
-    })
+    } catch (err) {
+        console.log(err, err.message)
+        return res.status(401).json({ message: 'Invalid or expired token' });
+    }
+
 }
 
 module.exports = { authMiddleware };
