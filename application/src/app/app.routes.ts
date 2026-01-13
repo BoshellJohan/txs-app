@@ -3,12 +3,12 @@ import { AuthGuard } from '@/core/guards/auth-guard';
 import { Login } from '@/features/auth/login/login';
 import { Chat } from '@/features/dashboard/chat/chat';
 import { Register } from '@/features/auth/register/register';
-import { AuthPage } from './features/auth/auth-page.ts/auth-page';
+import { AuthPage } from './features/auth/auth-page/auth-page';
 
 export const routes: Routes = [
     {
         path: '',
-        component: Login
+        component: AuthPage
     },
     {
         path: 'auth',

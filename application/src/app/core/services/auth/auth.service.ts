@@ -14,7 +14,6 @@ export class AuthService {
 
   private apiURL = 'http://localhost:8080/auth'
   private userSubject = new BehaviorSubject<User | null>(null);
-  user$ = this.userSubject.asObservable();
 
   login(credentials: LoginRequest): Observable<LoginResponse>{
     return this.http.post<LoginResponse>(`${this.apiURL}/login`, credentials).pipe(
@@ -31,6 +30,10 @@ export class AuthService {
 
   saveUser(user: User): void {
     this.userSubject.next(user);
+  }
+
+  get user$(){
+    return this.userSubject.asObservable();
   }
 
   // logout(): void {

@@ -14,6 +14,12 @@ const userSchema = new mongoose.Schema({
     name: {
         type: String
     },
+    isActive: {
+        type: Boolean
+    },
+    role: {
+        type: String
+    },
     refreshTokens: [
         {
             token: String,
