@@ -76,6 +76,10 @@ async function refresh(req, res){
         if(err.message == 'INVALID_TOKEN'){
             return res.status(401).json({success: false, message: "Refresh token inválido"});
         }
+
+        return res.status(400).json({
+            success: false, message: "Error al refrescar el token"
+        })
     }
 }
 
