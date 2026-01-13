@@ -1,7 +1,7 @@
 export function roleMiddleware(...allowedRoles){
     return (req, res, next) => {
         if(!req.user){
-            return res.status(401).json({success: false, message: 'User not loaded'});
+            return res.status(500).json({success: false, message: 'User not loaded'});
         }
 
         if(!allowedRoles.includes(req.user.role)){
