@@ -18,7 +18,9 @@ const userSchema = new mongoose.Schema({
         type: Boolean
     },
     role: {
-        type: String
+        type: String,
+        enum: ['solicitante', 'inversionista', 'admin'],
+        default: 'solicitante'
     },
     refreshTokens: [
         {

@@ -3,6 +3,7 @@ const router = express.Router();
 
 const authController = require('./auth.controller');
 const { authMiddleware } = require('./auth.middleware');
+const { roleMiddleware } = require('../../middlewares/role.middleware');
 
 router.post('/login', authController.login);
 router.post('/getuser', authController.getUser);
