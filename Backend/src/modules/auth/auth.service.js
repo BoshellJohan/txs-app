@@ -48,7 +48,7 @@ class AuthService {
 
     async forgotPassword(email){
         const user = await User.findOne({email});
-        if(!user) throw new Error('USER_NOT_FOUND');
+        if(!user) throw new Error('If the email exists, a message was sent');
 
         //Token temporal para la recuperación de contraseña
         const token = crypto.randomBytes(32).toString('hex');

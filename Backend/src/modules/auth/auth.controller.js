@@ -97,8 +97,7 @@ class AuthController {
             await sendPasswordResetEmail(email, token);
             return res.status(204);
         } catch(err){
-            console.log(err)
-            return res.status(500).json({success: false, message: "Error recuperando la contraseña"});
+            return res.status(500).json({success: false, message: "If the email exists, a message was sent"});
         }
     }
 
