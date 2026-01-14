@@ -1,4 +1,3 @@
-import { string } from 'mathjs';
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({

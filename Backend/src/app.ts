@@ -2,10 +2,10 @@ import 'dotenv/config';
 import cors from 'cors';
 import express from 'express';
 
-import authRouter from './src/modules/auth/auth.routes.js';
-import testRouter from './src/modules/test/test.routes.js';
-import { authMiddleware } from './src/modules/auth/auth.middleware.js';
-import { connectDB } from './src/config/db.js';
+import authRouter from './modules/auth/auth.routes.js';
+import testRouter from './modules/test/test.routes.js';
+import { authMiddleware } from './modules/auth/auth.middleware.js';
+import { connectDB } from './config/db.js';
 
 
 const app = express();
