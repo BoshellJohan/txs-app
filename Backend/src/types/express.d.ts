@@ -1,9 +1,9 @@
-import { IUser } from '../modules/users/user.types';
+import { IUserAuth } from '../modules/users/user.types';
 
 declare global {
   namespace Express {
     interface Request {
-      user?: IUser;
+      user?: IUserAuth;
     }
   }
 }
