@@ -9,8 +9,8 @@ class AuthController {
             const {email, password} = req.body;
             const user = await authService.login(email, password);
 
-            const accessToken = jwtUtils.generateAccessToken(user);
-            const refreshToken = jwtUtils.generateRefreshToken(user);
+            const accessToken = JwtUtils.generateAccessToken(user);
+            const refreshToken = JwtUtils.generateRefreshToken(user);
             await userService.addRefreshToken(user.email, refreshToken);
 
             return res.status(200).json({

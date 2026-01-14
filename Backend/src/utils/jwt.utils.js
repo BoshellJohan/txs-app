@@ -9,7 +9,7 @@ class JwtUtils {
     }
 
     generateRefreshToken(user){
-        return refreshToken = jwt.sign(
+        return jwt.sign(
             {_id: user._id, email: user.email},
             process.env.JWT_REFRESH,
             { expiresIn: process.env.REFRESH_TOKEN_EXPIRATION });

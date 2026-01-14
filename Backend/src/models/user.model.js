@@ -30,6 +30,9 @@ const userSchema = new mongoose.Schema({
     ],
     passwordRecoveryToken: {
         type: String
+    },
+    passwordRecoveryExpires: {
+        type: Date
     }
 }, {
     timestamps: true
