@@ -22,9 +22,9 @@ class AuthService {
         delete userObject.refreshTokens;
 
         return {
-            _id: user._id.toString(),
-            email: user.email,
-            role: user.role,
+            _id: userObject._id.toString(),
+            email: userObject.email,
+            role: userObject.role,
         }
     }
 
