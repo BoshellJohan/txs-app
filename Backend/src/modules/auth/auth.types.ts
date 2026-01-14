@@ -7,6 +7,13 @@ export interface IJwtPayload {
     exp?: number;
 }
 
+export interface IJwtRefreshPayload {
+    _id: string;
+    email: string;
+    iat?: number;
+    exp?: number;
+}
+
 export interface LoginDto {
     email: string;
     password: string;

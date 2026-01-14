@@ -21,3 +21,8 @@ export interface IUserPublic {
     email: string;
     role: 'solicitante' | 'inversionista' | 'admin';
 }
+
+export interface AddRefreshToken {
+    email: string,
+    token: string
+}
