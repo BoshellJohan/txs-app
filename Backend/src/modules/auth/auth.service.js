@@ -1,6 +1,7 @@
 const User = require('../../models/user.model');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 async function login(email, password){
     const user = await User.findOne({email});
@@ -47,22 +48,34 @@ async function signup(email, password, name){
 
 async function forgotPassword(email){
     const user = await User.findOne({email});
+    if(!user) throw new Error('USER_NOT_FOUND');
+
     //Token temporal para la recuperación de contraseña
-    const tempToken = jwt.sign(
-        {_id: user.id, email: user.email},
-        process.env.PASSWORD_TOKEN,
-        {expiresIn: '20m'}
-    )
+    const token = crypto.randomBytes(32).toString('hex');
+    const hashed = crypto.createHash('sha256').update(token).digest('hex');
 
-    //Guardar token hasheado
-    const hashToken = await bcrypt.hash(tempToken, 10);
-    user.passwordRecoveryToken = hashToken;
-    const savedUser = await user.save();
+    user.passwordRecoveryToken = hashed;
+    user.passwordRecoveryExpires = Date.now() + 20 * 60 * 1000; //20 minutos
 
-    return tempToken;
-    //Enviar email con el link
-    //http:/localhost:8080/reset-password/token=XYZ
-    //Tiene 20 mins para terminar el proceso
+    await user.save();
+    return token;
+}
+
+async function resetPassword(token, newPassword){
+    const hashed = crypto.createHash('sha256').update(token).digest('hex');
+
+    const user = await User.findOne(
+        {$and: [
+            {passwordRecoveryToken: hashed},
+            {passwordRecoveryExpires: {$gt: Date.now()}}
+        ]});
+
+    if(!user) throw new Error("INVALID_OR_EXPIRED_TOKEN");
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    user.passwordRecoveryToken = undefined;
+    user.passwordRecoveryExpires = undefined;
+    await user.save();
 }
 
 async function getUser(email){
@@ -75,4 +88,4 @@ async function getUser(email){
     return userObject;
 }
 
-module.exports = {forgotPassword, login, signup, getUser};
+module.exports = {forgotPassword, resetPassword, login, signup, getUser};

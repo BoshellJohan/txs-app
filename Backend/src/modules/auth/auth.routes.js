@@ -5,7 +5,8 @@ const authController = require('./auth.controller');
 const { authMiddleware } = require('./auth.middleware');
 const { roleMiddleware } = require('../../middlewares/role.middleware');
 
-router.post('/forgot-password', authController.forgotPassword)
+router.post('/forgot-password', authController.forgotPassword);
+router.post('/reset-password', authController.resetPassword);
 router.post('/getuser', authController.getUser);
 router.post('/login', authController.login);
 router.post('/logout', authController.logout);

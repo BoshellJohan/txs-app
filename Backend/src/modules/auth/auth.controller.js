@@ -92,15 +92,28 @@ async function logout(req, res){
 async function forgotPassword(req, res){
     const { email } = req.body;
     try {
-        const tempToken = await authService.forgotPassword(email);
+        const token = await authService.forgotPassword(email);
         // const res = await emailService.recoveryPassword(tempToken, email);
+        return res.status(204);
     } catch(err){
         console.log(err)
         return res.status(500).json({success: false, message: "Error recuperando la contraseña"});
-    }
+    }ww
 }
 
+async function resetPassword(req, res){
+    const { passwordToken, newPassword } = req.body;
+    try {
+        await authService.resetPassword(passwordToken, newPassword);
+        return res.status(204);
+    } catch(err){
+        if(err.message == 'INVALID_TOKEN'){
+            return res.status(401).json({success: false, message: "INVALID_TOKEN"});
+        }
 
+        return res.status(500).json({success: false, message: "Error while setting new password"});
+    }
+}
 
 async function getUser(req, res){
     const { refreshToken } = req.body;
@@ -110,4 +123,4 @@ async function getUser(req, res){
     res.status(200).json({success: true, user});
 }
 
-module.exports = {forgotPassword, login, signup, refresh, logout, getUser};
+module.exports = {forgotPassword, resetPassword, login, signup, refresh, logout, getUser};
