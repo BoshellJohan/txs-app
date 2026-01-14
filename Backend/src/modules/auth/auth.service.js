@@ -1,91 +1,92 @@
-const User = require('../../models/user.model');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
+import User from '../../models/user.model.js';
+import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 
-async function login(email, password){
-    const user = await User.findOne({email});
+class AuthService {
+    async login(email, password){
+        const user = await User.findOne({email});
 
-    if(!user){
-        throw new Error('INVALID_CREDENTIALS');
+        if(!user){
+            throw new Error('INVALID_CREDENTIALS');
+        }
+
+        const isValidPassword = await bcrypt.compare(password, user.password);
+
+        if(!isValidPassword){
+            throw new Error('INVALID_CREDENTIALS');
+        }
+
+        const userObject = user.toObject();
+        delete userObject.password;
+        delete userObject.refreshTokens;
+
+        return userObject;
     }
 
-    const isValidPassword = await bcrypt.compare(password, user.password);
+    async signup(email, password, name){
+        const existingUser = await User.findOne({email});
 
-    if(!isValidPassword){
-        throw new Error('INVALID_CREDENTIALS');
+        if(existingUser){
+            throw new Error('EMAIL_EXISTS');
+        }
+
+        const hashPassword = await bcrypt.hash(password, 10);
+
+        const user = new User({
+            email: email,
+            password: hashPassword,
+            name: name
+        })
+
+        const savedUser = await user.save();
+
+        const userObject = savedUser.toObject()
+        delete userObject.password;
+
+        return userObject;
     }
 
-    const userObject = user.toObject();
-    delete userObject.password;
-    delete userObject.refreshTokens;
+    async forgotPassword(email){
+        const user = await User.findOne({email});
+        if(!user) throw new Error('USER_NOT_FOUND');
 
-    return userObject;
-}
+        //Token temporal para la recuperación de contraseña
+        const token = crypto.randomBytes(32).toString('hex');
+        const hashed = crypto.createHash('sha256').update(token).digest('hex');
 
-async function signup(email, password, name){
-    const existingUser = await User.findOne({email});
+        user.passwordRecoveryToken = hashed;
+        user.passwordRecoveryExpires = Date.now() + 20 * 60 * 1000; //20 minutos
 
-    if(existingUser){
-        throw new Error('EMAIL_EXISTS');
+        await user.save();
+        return token;
     }
 
-    const hashPassword = await bcrypt.hash(password, 10);
+    async resetPassword(token, newPassword){
+        const hashed = crypto.createHash('sha256').update(token).digest('hex');
 
-    const user = new User({
-        email: email,
-        password: hashPassword,
-        name: name
-    })
+        const user = await User.findOne(
+            {$and: [
+                {passwordRecoveryToken: hashed},
+                {passwordRecoveryExpires: {$gt: Date.now()}}
+            ]});
 
-    const savedUser = await user.save();
+        if(!user) throw new Error("INVALID_OR_EXPIRED_TOKEN");
 
-    const userObject = savedUser.toObject()
-    delete userObject.password;
+        user.password = await bcrypt.hash(newPassword, 10);
+        user.passwordRecoveryToken = undefined;
+        user.passwordRecoveryExpires = undefined;
+        await user.save();
+    }
 
-    return userObject;
+    async getUser(email){
+        const user = await User.findOne({email});
+        if(!user) return null;
+
+        const userObject = user.toObject();
+        delete userObject.password;
+
+        return userObject;
+    }
 }
 
-async function forgotPassword(email){
-    const user = await User.findOne({email});
-    if(!user) throw new Error('USER_NOT_FOUND');
-
-    //Token temporal para la recuperación de contraseña
-    const token = crypto.randomBytes(32).toString('hex');
-    const hashed = crypto.createHash('sha256').update(token).digest('hex');
-
-    user.passwordRecoveryToken = hashed;
-    user.passwordRecoveryExpires = Date.now() + 20 * 60 * 1000; //20 minutos
-
-    await user.save();
-    return token;
-}
-
-async function resetPassword(token, newPassword){
-    const hashed = crypto.createHash('sha256').update(token).digest('hex');
-
-    const user = await User.findOne(
-        {$and: [
-            {passwordRecoveryToken: hashed},
-            {passwordRecoveryExpires: {$gt: Date.now()}}
-        ]});
-
-    if(!user) throw new Error("INVALID_OR_EXPIRED_TOKEN");
-
-    user.password = await bcrypt.hash(newPassword, 10);
-    user.passwordRecoveryToken = undefined;
-    user.passwordRecoveryExpires = undefined;
-    await user.save();
-}
-
-async function getUser(email){
-    const user = await User.findOne({email});
-    if(!user) return null;
-
-    const userObject = user.toObject();
-    delete userObject.password;
-
-    return userObject;
-}
-
-module.exports = {forgotPassword, resetPassword, login, signup, getUser};
+export default new AuthService();

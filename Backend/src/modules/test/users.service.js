@@ -1,10 +1,10 @@
-const User = require('../../models/user.model');
+import User from '../../models/user.model.js';
 
-async function getAllUsers(){
-    console.log("Consultando usuarios");
-    const allUsers = User.find();
-    console.log(allUsers);
-    return allUsers;
+class UserService {
+    async getAllUsers(){
+        const allUsers = User.find();
+        return allUsers;
+    }
 }
 
-module.exports = { getAllUsers };
+export default new UserService();

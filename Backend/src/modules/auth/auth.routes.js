@@ -1,9 +1,10 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 
-const authController = require('./auth.controller');
-const { authMiddleware } = require('./auth.middleware');
-const { roleMiddleware } = require('../../middlewares/role.middleware');
+import authController from './auth.controller.js';
+import { authMiddleware } from './auth.middleware.js';
+import { roleMiddleware } from '../../middlewares/role.middleware.js';
+
 
 router.post('/forgot-password', authController.forgotPassword);
 router.post('/reset-password', authController.resetPassword);
@@ -16,4 +17,4 @@ router.get('/me', authMiddleware, async(req, res) => {
     res.json(req.user);
 })
 
-module.exports = router;
+export default router;

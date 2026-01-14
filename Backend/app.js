@@ -1,10 +1,12 @@
-require('dotenv').config();
-const cors = require('cors');
-const express = require('express');
-const authRouter = require('./src/modules/auth/auth.routes');
-const testRouter = require('./src/modules/test/test.routes');
-const { authMiddleware } = require('./src/modules/auth/auth.middleware');
-const connectDB = require('./src/config/db');
+import 'dotenv/config';
+import cors from 'cors';
+import express from 'express';
+
+import authRouter from './src/modules/auth/auth.routes.js';
+import testRouter from './src/modules/test/test.routes.js';
+import { authMiddleware } from './src/modules/auth/auth.middleware.js';
+import { connectDB } from './src/config/db.js';
+
 
 const app = express();
 
@@ -24,6 +26,6 @@ app.get('/dashboard', authMiddleware, (req, res) => {
 });
 
 
-module.exports = app;
+export default app;
 
 

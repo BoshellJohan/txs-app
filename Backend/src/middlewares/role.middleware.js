@@ -1,4 +1,4 @@
-export function roleMiddleware(...allowedRoles){
+export const roleMiddleware = (...allowedRoles) => {
     return (req, res, next) => {
         if(!req.user){
             return res.status(500).json({success: false, message: 'User not loaded'});

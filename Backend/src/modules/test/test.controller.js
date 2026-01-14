@@ -1,6 +1,6 @@
-const testService = require('./users.service');
+import testService from './users.service.js';
 
-async function getAllUsers(req, res) {
+export const getAllUsers = async (req, res) => {
     try{
         const result = await testService.getAllUsers();
         return res.status(200).json({
@@ -15,4 +15,3 @@ async function getAllUsers(req, res) {
 
 }
 
-module.exports = {getAllUsers};

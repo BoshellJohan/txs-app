@@ -1,7 +1,7 @@
-const jwt = require('jsonwebtoken');
-const authService = require('./auth.service');
+import jwt from 'jsonwebtoken';
+import authService from './auth.service.js';
 
-async function authMiddleware(req, res, next){
+export const authMiddleware = async (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
@@ -20,5 +20,3 @@ async function authMiddleware(req, res, next){
     }
 
 }
-
-module.exports = { authMiddleware };

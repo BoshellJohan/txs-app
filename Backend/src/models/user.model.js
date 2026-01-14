@@ -1,5 +1,5 @@
-const { string } = require('mathjs');
-const mongoose = require('mongoose');
+import { string } from 'mathjs';
+import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
     email: {
@@ -35,4 +35,4 @@ const userSchema = new mongoose.Schema({
     timestamps: true
 });
 
-module.exports = mongoose.model('User', userSchema);
+export default mongoose.model('User', userSchema);
