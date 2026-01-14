@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 class JwtUtils {
     generateAccessToken(user){
         return jwt.sign(
-            {_id: user._id, email: user.email},
+            {_id: user._id, email: user.email, role: user.role, isActive: user.isActive},
             process.env.JWT_ACCESS,
             { expiresIn: process.env.ACCESS_TOKEN_EXPIRATION });
     }
