@@ -4,14 +4,14 @@ import crypto from 'crypto';
 import { LoginDto, PublicUser, RegisterDto, ResetPasswordDto } from './auth.types.js';
 
 class AuthService {
-    async login(data: LoginDto): Promise<PublicUser> {
-        const user = await User.findOne({email: data.email});
-
+    async login(credentials: LoginDto): Promise<PublicUser> {
+        const user = await User.findOne({email: credentials.email});
+        console.log(credentials)
         if(!user){
             throw new Error('INVALID_CREDENTIALS');
         }
 
-        const isValidPassword = await bcrypt.compare(data.password, user.password);
+        const isValidPassword = await bcrypt.compare(credentials.password, user.password);
 
         if(!isValidPassword){
             throw new Error('INVALID_CREDENTIALS');
@@ -28,17 +28,17 @@ class AuthService {
         }
     }
 
-    async signup(data: RegisterDto): Promise<PublicUser> {
-        const existingUser = await User.findOne({email: data.email});
+    async signup(credentials: RegisterDto): Promise<PublicUser> {
+        const existingUser = await User.findOne({email: credentials.email});
 
         if(existingUser){
             throw new Error('EMAIL_EXISTS');
         }
 
-        const hashPassword = await bcrypt.hash(data.password, 10);
+        const hashPassword = await bcrypt.hash(credentials.password, 10);
 
         const user = new User({
-            email: data.email,
+            email: credentials.email,
             password: hashPassword,
             role: 'solicitante',
             name: name
