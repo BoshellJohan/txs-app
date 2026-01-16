@@ -25,6 +25,7 @@ class AuthService {
             _id: userObject._id.toString(),
             email: userObject.email,
             role: userObject.role,
+            isActive: userObject.isActive
         }
     }
 
@@ -52,6 +53,7 @@ class AuthService {
             _id: user._id.toString(),
             email: user.email,
             role: user.role,
+            isActive: user.isActive
         }
     }
 
