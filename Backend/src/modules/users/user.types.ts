@@ -1,4 +1,4 @@
-export interface IUserDB {
+export interface UserDB {
     _id: string;
     email: string;
     password: string;
@@ -11,12 +11,6 @@ export interface IUserDB {
 }
 
 export interface IUserAuth {
-    _id: string;
-    email: string;
-    role: 'solicitante' | 'inversionista' | 'admin';
-}
-
-export interface IUserPublic {
     _id: string;
     email: string;
     role: 'solicitante' | 'inversionista' | 'admin';
