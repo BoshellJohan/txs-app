@@ -3,14 +3,14 @@ import authService from './auth.service.js';
 import JwtUtils from '../../utils/jwt.utils.js';
 import userService from '../users/user.service.js';
 import { sendPasswordResetEmail } from '../mail/mail.service.js';
-import { LoginDto, RegisterDto, ResetPasswordDto } from './auth.types.js';
+import { LoginDto, PublicUser, RegisterDto, ResetPasswordDto } from './auth.types.js';
 import { AddRefreshToken } from '../users/user.types.js';
 
 class AuthController {
     async login(req: Request, res: Response){
         try{
             const credentials: LoginDto = req.body;
-            const user = await authService.login(credentials);
+            const user: PublicUser = await authService.login(credentials);
 
             const accessToken = JwtUtils.generateAccessToken(user);
             const refreshToken = JwtUtils.generateRefreshToken(user);
@@ -44,7 +44,7 @@ class AuthController {
         const credentials: RegisterDto = req.body;
 
         try {
-            const user = await authService.signup(credentials);
+            const user: PublicUser = await authService.signup(credentials);
             const refreshToken = JwtUtils.generateRefreshToken(user);
             const refreshData: AddRefreshToken = {email: user.email, token: refreshToken};
             await userService.addRefreshToken(refreshData);

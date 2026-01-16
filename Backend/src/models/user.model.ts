@@ -1,10 +1,13 @@
-import mongoose from 'mongoose';
+import mongoose, { model } from 'mongoose';
+import { UserDB } from '../modules/users/user.types.js';
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema<UserDB>({
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        lowercase: true,
+        trim: true
     },
     password: {
         type: String,
@@ -14,7 +17,8 @@ const userSchema = new mongoose.Schema({
         type: String
     },
     isActive: {
-        type: Boolean
+        type: Boolean,
+        default: true,
     },
     role: {
         type: String,
@@ -37,4 +41,4 @@ const userSchema = new mongoose.Schema({
     timestamps: true
 });
 
-export default mongoose.model('User', userSchema);
+export const UserModel = model<UserDB>('User', userSchema);

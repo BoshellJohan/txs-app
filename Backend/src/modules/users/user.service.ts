@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import User from '../../models/user.model.js';
-import { AddRefreshToken, IUserDB } from './user.types.js';
+import { AddRefreshToken, UserDB } from './user.types.js';
 import { IJwtRefreshPayload } from '../auth/auth.types.js';
 
 class UserService {
@@ -15,7 +15,7 @@ class UserService {
         );
     }
 
-    async getUserByRefreshToken(token: string): Promise<IUserDB>{
+    async getUserByRefreshToken(token: string): Promise<UserDB>{
         const payload = jwt.verify(token, process.env.JWT_REFRESH as string) as IJwtRefreshPayload;
         const user = await User.findOne({$and: [{"refreshTokens.token": token}, {_id: payload._id}]});
 
