@@ -1,11 +1,11 @@
-import User from '../../models/user.model.js';
+import { UserModel } from '../../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { LoginDto, PublicUser, RegisterDto, ResetPasswordDto } from './auth.types.js';
 
 class AuthService {
     async login(credentials: LoginDto): Promise<PublicUser> {
-        const user = await User.findOne({email: credentials.email});
+        const user = await UserModel.findOne({email: credentials.email});
         console.log(credentials)
         if(!user){
             throw new Error('INVALID_CREDENTIALS');
@@ -30,7 +30,7 @@ class AuthService {
     }
 
     async signup(credentials: RegisterDto): Promise<PublicUser> {
-        const existingUser = await User.findOne({email: credentials.email});
+        const existingUser = await UserModel.findOne({email: credentials.email});
 
         if(existingUser){
             throw new Error('EMAIL_EXISTS');
@@ -38,7 +38,7 @@ class AuthService {
 
         const hashPassword = await bcrypt.hash(credentials.password, 10);
 
-        const user = new User({
+        const user = new UserModel({
             email: credentials.email,
             password: hashPassword,
             role: 'solicitante',
@@ -58,7 +58,7 @@ class AuthService {
     }
 
     async forgotPassword(email: string): Promise<string> {
-        const user = await User.findOne({email});
+        const user = await UserModel.findOne({email});
         if(!user) throw new Error('If the email exists, a message was sent');
 
         //Token temporal para la recuperación de contraseña
@@ -75,7 +75,7 @@ class AuthService {
     async resetPassword(data: ResetPasswordDto): Promise<void> {
         const hashed = crypto.createHash('sha256').update(data.token).digest('hex');
 
-        const user = await User.findOne(
+        const user = await UserModel.findOne(
             {$and: [
                 {passwordRecoveryToken: hashed},
                 {passwordRecoveryExpires: {$gt: Date.now()}}
@@ -91,7 +91,7 @@ class AuthService {
 
     //Función de prueba, se debe borrar o mover al userService;
     async getUser(email: string){
-        const user = await User.findOne({email});
+        const user = await UserModel.findOne({email});
         if(!user) return null;
 
         const userObject = user.toObject();
