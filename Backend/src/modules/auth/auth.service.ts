@@ -18,11 +18,12 @@ class AuthService {
             throw new Error('INVALID_CREDENTIALS');
         }
 
+        const userObject = user.toObject();
         return {
-            _id: user._id.toString(),
-            email: user.email,
-            role: user.role,
-            isActive: user.isActive
+            _id: userObject._id.toString(),
+            email: userObject.email,
+            role: userObject.role,
+            isActive: userObject.isActive
         }
     }
 
@@ -41,17 +42,19 @@ class AuthService {
             role: 'solicitante',
             name: credentials.name
         })
-
+        
+        const savedUser = await user.save();
+        const userObject = savedUser.toObject();
         return {
-            _id: user._id.toString(),
-            email: user.email,
-            role: user.role,
-            isActive: user.isActive
+            _id: userObject._id.toString(),
+            email: userObject.email,
+            role: userObject.role,
+            isActive: userObject.isActive
         }
     }
 
     async forgotPassword(email: string): Promise<string> {
-        const user = await UserModel.findOne({email});
+        const user = await UserModel.findOne({ email });
         if(!user) throw new Error('If the email exists, a message was sent');
 
         //Token temporal para la recuperación de contraseña
@@ -68,7 +71,7 @@ class AuthService {
     }
 
     async resetPassword(data: ResetPasswordDto): Promise<void> {
-        const hashed = crypto.createHash('sha256').update(data.token).digest('hex');
+        const hashed = crypto.createHash('sha256').update(data.passwordToken).digest('hex');
 
         const user = await UserModel.findOne(
             {$and: [

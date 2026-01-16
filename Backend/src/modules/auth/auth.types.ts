@@ -26,7 +26,7 @@ export interface RegisterDto {
 }
 
 export interface ResetPasswordDto {
-    token: string;
+    passwordToken: string;
     newPassword: string;
 }
 

@@ -2,7 +2,7 @@ import { UserModel } from '../../models/user.model.js';
 
 class UserService {
     async getAllUsers(){
-        const allUsers = UserModel.find();
+        const allUsers = await UserModel.find({});
         return allUsers;
     }
 }

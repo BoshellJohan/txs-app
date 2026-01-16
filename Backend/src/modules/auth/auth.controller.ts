@@ -45,7 +45,6 @@ class AuthController {
 
         try {
             const user: PublicUser = await authService.signup(credentials);
-            console.log(user);
             const refreshToken = JwtUtils.generateRefreshToken(user);
             const refreshData: AddRefreshToken = {email: user.email, token: refreshToken};
             await userService.addRefreshToken(refreshData);
