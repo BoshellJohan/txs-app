@@ -2,11 +2,12 @@ import { UserModel } from '../../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { LoginDto, PublicUser, RegisterDto, ResetPasswordDto } from './auth.types.js';
+import { UserClient } from '../users/user.types.js';
 
 class AuthService {
     async login(credentials: LoginDto): Promise<PublicUser> {
         const user = await UserModel.findOne({email: credentials.email});
-        console.log(credentials)
+
         if(!user){
             throw new Error('INVALID_CREDENTIALS');
         }
@@ -17,15 +18,11 @@ class AuthService {
             throw new Error('INVALID_CREDENTIALS');
         }
 
-        const userObject = user.toObject();
-        delete userObject.password;
-        delete userObject.refreshTokens;
-
         return {
-            _id: userObject._id.toString(),
-            email: userObject.email,
-            role: userObject.role,
-            isActive: userObject.isActive
+            _id: user._id.toString(),
+            email: user.email,
+            role: user.role,
+            isActive: user.isActive
         }
     }
 
@@ -42,12 +39,8 @@ class AuthService {
             email: credentials.email,
             password: hashPassword,
             role: 'solicitante',
-            name: name
+            name: credentials.name
         })
-
-        const savedUser = await user.save();
-
-        // const userObject = savedUser.toObject()
 
         return {
             _id: user._id.toString(),
@@ -66,7 +59,9 @@ class AuthService {
         const hashed = crypto.createHash('sha256').update(token).digest('hex');
 
         user.passwordRecoveryToken = hashed;
-        user.passwordRecoveryExpires = Date.now() + 20 * 60 * 1000; //20 minutos
+        const expiresAt = new Date();
+        expiresAt.setMinutes(expiresAt.getMinutes() + 20); //20 minutos
+        user.passwordRecoveryExpires = expiresAt
 
         await user.save();
         return token;
@@ -94,7 +89,7 @@ class AuthService {
         const user = await UserModel.findOne({email});
         if(!user) return null;
 
-        const userObject = user.toObject();
+        const userObject: UserClient = user.toObject();
         delete userObject.password;
 
         return userObject;

@@ -17,7 +17,7 @@ export interface UserClient {
     name: string;
     isActive: boolean;
     role: 'solicitante' | 'inversionista' | 'admin';
-    refreshTokens: {token: string, createdAt: Date}[];
+    refreshTokens?: {token: string, createdAt: Date}[];
     passwordRecoveryToken?: string;
     passwordRecoveryExpires?: Date;
 }
