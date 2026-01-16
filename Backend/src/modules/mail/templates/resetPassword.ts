@@ -1,4 +1,4 @@
-export function resetPasswordTemplate(link){
+export function resetPasswordTemplate(link: string): string{
     return `
     <h3>Recuperación de contraseña</h3>
     <p>Presiona el botón de abajo</p>

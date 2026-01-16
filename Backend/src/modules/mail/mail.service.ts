@@ -1,7 +1,7 @@
 import { transporter } from "./mail.config.js";
 import { resetPasswordTemplate } from "./templates/resetPassword.js";
 
-export async function sendPasswordResetEmail(email, token){
+export async function sendPasswordResetEmail(email: string, token: string): Promise<void>{
     const link = `${process.env.FRONT_URL}/reset-password?token=${token}`;
 
     await transporter.sendMail({
