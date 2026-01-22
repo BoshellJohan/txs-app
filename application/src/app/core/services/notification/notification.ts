@@ -9,7 +9,7 @@ import { Observable, throwError } from 'rxjs';
 export class NotificationService {
   constructor(private snackBar: MatSnackBar){}
 
-  showError(message: string, action: string = 'OK', config?: MatSnackBarConfig){
+  showError(message: string, action: string = '', config?: MatSnackBarConfig){
     const defaultConfig:MatSnackBarConfig = {
       duration: 5000,
       horizontalPosition: 'right',

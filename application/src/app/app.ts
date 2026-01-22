@@ -11,17 +11,6 @@ import { NotificationService } from './core/services/notification/notification';
 export class App implements OnInit {
   protected readonly title = signal('application');
 
-  // constructor(private notificationService: NotificationService){}
   ngOnInit(): void {
-  // this.probarError()
-  // this.probarExito()
   }
-
-  // probarExito(){
-  //   this.notificationService.showSuccess('Operación realizada con éxito');
-  // }
-
-  // probarError(){
-  //   this.notificationService.showError('Errorciño');
-  // }
 }
