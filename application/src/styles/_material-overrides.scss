@@ -1,0 +1,27 @@
+.mat-mdc-snack-bar-container {
+  &.error-snackbar {
+    background-color: $warn !important;
+    color: white !important;
+
+    .mdc-snackbar__label {
+      font-weight: 500;
+    }
+
+    .mat-mdc-button {
+      color: white !important;
+    }
+  }
+
+  &.success-snackbar {
+    background-color: #4caf50 !important;
+    color: white !important;
+
+    .mdc-snackbar__label {
+      font-weight: 500;
+    }
+
+    .mat-mdc-button {
+      color: white !important;
+    }
+  }
+}
