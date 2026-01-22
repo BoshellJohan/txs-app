@@ -1,27 +1,26 @@
-.mat-mdc-snack-bar-container {
-  &.error-snackbar {
-    background-color: $warn !important;
-    color: white !important;
+@use 'variables' as v;
+@use '@angular/material' as mat;
 
-    .mdc-snackbar__label {
-      font-weight: 500;
-    }
+:root {
+  @include mat.snack-bar-overrides((
+    container-color: #323232,
+    supporting-text-color: #ffffff,
+    button-color: #bb86fc,
+  ));
+}
 
-    .mat-mdc-button {
-      color: white !important;
-    }
-  }
+.error-snackbar {
+  @include mat.snack-bar-overrides((
+    container-color: #d32f2f,
+    button-color: white,
+    supporting-text-color: white,
+  ));
+}
 
-  &.success-snackbar {
-    background-color: #4caf50 !important;
-    color: white !important;
-
-    .mdc-snackbar__label {
-      font-weight: 500;
-    }
-
-    .mat-mdc-button {
-      color: white !important;
-    }
-  }
+.success-snackbar {
+  @include mat.snack-bar-overrides((
+    container-color: #2e7d32,
+    button-color: white,
+    supporting-text-color: white,
+  ));
 }
