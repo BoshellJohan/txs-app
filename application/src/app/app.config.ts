@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, ApplicationConfig, inject, provideAppInitializer, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { APP_INITIALIZER, ApplicationConfig, importProvidersFrom, inject, provideAppInitializer, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { routes } from './app.routes';
@@ -6,11 +6,16 @@ import { AuthInterceptor } from '@/core/interceptors/auth.interceptor';
 import { ErrorInterceptor } from '@/core/interceptors/error.interceptor';
 import { AuthService } from './core/services/auth/auth.service';
 
+import{ MatSnackBarModule } from '@angular/material/snack-bar';
+import { provideAnimations } from '@angular/platform-browser/animations';
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(withInterceptorsFromDi()),
+    provideAnimations(),
+    importProvidersFrom(MatSnackBarModule),
     provideAppInitializer(() => {
       const authService = inject(AuthService);
       return authService.rehydrateSession();
