@@ -1,4 +1,4 @@
-import { IJwtPayload } from "../modules/auth/auth.types.js";
+import { IJwtPayload } from "../modules/auth/types/auth.types.js";
 
 export function isJWTPayload(payload: any): payload is IJwtPayload {
     return (
@@ -6,7 +6,6 @@ export function isJWTPayload(payload: any): payload is IJwtPayload {
     payload !== null &&
     typeof payload.id === 'string' &&
     typeof payload.email === 'string' &&
-    typeof payload.role === 'string' &&
-    typeof payload.isActive === 'boolean'
+    typeof payload.role === 'string'
   );
 }
