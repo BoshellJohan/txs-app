@@ -1,101 +1,59 @@
-import { UserModel } from '../../models/user.model.js';
-import bcrypt from 'bcryptjs';
-import crypto from 'crypto';
-import { LoginDto, PublicUser, RegisterDto, ResetPasswordDto } from './auth.types.js';
-import { UserClient } from '../users/user.types.js';
+import { AddTokenType, LoginDto } from './types/auth.types.js';
+import usersService from '../users/users.service.js';
+import { compareHashes } from '../../utils/bcrypt.js';
+import jwtUtils from '../../utils/jwt.utils.js';
+import authRepository from './auth.repository.js';
+import { NotFoundError } from '../../common/errors/NotFoundError.js';
+import { UnauthorizedError } from '../../common/errors/UnauthorizedError.js';
+
 
 class AuthService {
-    async login(credentials: LoginDto): Promise<PublicUser> {
-        const user = await UserModel.findOne({email: credentials.email});
+    async login(credentials: LoginDto) {
+        try {
+            const user = await usersService.getUserByEmail(credentials.email);
+    
+            if(!user){
+                throw new NotFoundError('User not found');
+            }
+    
+            const isValidPassword = await compareHashes(credentials.password, user.password);
+    
+            if(!isValidPassword){
+                throw new UnauthorizedError('Invalid credentials');
+            }
+    
+            const accessToken = jwtUtils.generateAccessToken(user);
+            const refreshToken = jwtUtils.generateRefreshToken(user);
 
-        if(!user){
-            throw new Error('INVALID_CREDENTIALS');
-        }
-
-        const isValidPassword = await bcrypt.compare(credentials.password, user.password);
-
-        if(!isValidPassword){
-            throw new Error('INVALID_CREDENTIALS');
-        }
-
-        const userObject = user.toObject();
-        return {
-            _id: userObject._id.toString(),
-            email: userObject.email,
-            role: userObject.role,
-            isActive: userObject.isActive
-        }
-    }
-
-    async signup(credentials: RegisterDto): Promise<PublicUser> {
-        const existingUser = await UserModel.findOne({email: credentials.email});
-
-        if(existingUser){
-            throw new Error('EMAIL_EXISTS');
-        }
-
-        const hashPassword = await bcrypt.hash(credentials.password, 10);
-
-        const user = new UserModel({
-            email: credentials.email,
-            password: hashPassword,
-            role: 'solicitante',
-            name: credentials.name
-        })
-        
-        const savedUser = await user.save();
-        const userObject = savedUser.toObject();
-        return {
-            _id: userObject._id.toString(),
-            email: userObject.email,
-            role: userObject.role,
-            isActive: userObject.isActive
+            const refreshData: AddTokenType = {id: user.userid, token: refreshToken};
+            await authRepository.addRefreshToken(refreshData);
+            
+            return {
+                accessToken,
+                refreshToken
+            };
+        } catch (error){
+            throw error;
         }
     }
 
-    async forgotPassword(email: string): Promise<string> {
-        const user = await UserModel.findOne({ email });
-        if(!user) throw new Error('If the email exists, a message was sent');
-
-        //Token temporal para la recuperación de contraseña
-        const token = crypto.randomBytes(32).toString('hex');
-        const hashed = crypto.createHash('sha256').update(token).digest('hex');
-
-        user.passwordRecoveryToken = hashed;
-        const expiresAt = new Date();
-        expiresAt.setMinutes(expiresAt.getMinutes() + 20); //20 minutos
-        user.passwordRecoveryExpires = expiresAt
-
-        await user.save();
-        return token;
+    async logout(token: string){
+        try {
+            return await authRepository.clearRefreshToken(token);
+        } catch(error){
+            throw error;
+        }
     }
 
-    async resetPassword(data: ResetPasswordDto): Promise<void> {
-        const hashed = crypto.createHash('sha256').update(data.passwordToken).digest('hex');
+    async refresh(token: string){
+        try {
+            const user = await authRepository.getUserByRefreshToken(token);
+            if(!user || user.refreshtokens.length == 0) throw new UnauthorizedError('Invalid credentials');
 
-        const user = await UserModel.findOne(
-            {$and: [
-                {passwordRecoveryToken: hashed},
-                {passwordRecoveryExpires: {$gt: Date.now()}}
-            ]});
-
-        if(!user) throw new Error("INVALID_OR_EXPIRED_TOKEN");
-
-        user.password = await bcrypt.hash(data.newPassword, 10);
-        user.passwordRecoveryToken = undefined;
-        user.passwordRecoveryExpires = undefined;
-        await user.save();
-    }
-
-    //Función de prueba, se debe borrar o mover al userService;
-    async getUser(email: string){
-        const user = await UserModel.findOne({email});
-        if(!user) return null;
-
-        const userObject: UserClient = user.toObject();
-        delete userObject.password;
-
-        return userObject;
+            return jwtUtils.generateAccessToken(user);
+        } catch (error){
+            throw error;
+        }
     }
 }
 
