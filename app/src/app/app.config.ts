@@ -7,14 +7,12 @@ import { ErrorInterceptor } from '@/core/interceptors/error.interceptor';
 import { AuthService } from './core/services/auth/auth.service';
 
 import{ MatSnackBarModule } from '@angular/material/snack-bar';
-import { provideAnimations } from '@angular/platform-browser/animations';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(withInterceptorsFromDi()),
-    provideAnimations(),
     importProvidersFrom(MatSnackBarModule),
     provideAppInitializer(() => {
       const authService = inject(AuthService);
