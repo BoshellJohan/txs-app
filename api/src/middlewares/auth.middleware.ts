@@ -7,7 +7,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
-    if(!token) throw new UnauthorizedError('Token expired');
+    if(!token) throw new UnauthorizedError('Invalid token');
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_ACCESS as string);
