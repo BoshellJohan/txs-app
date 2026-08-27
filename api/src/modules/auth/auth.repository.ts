@@ -27,15 +27,17 @@ class AuthRepository {
     }
 
     async getUserByRefreshToken(token: string){
-        return await prisma.users.findFirst({
+        const record = await prisma.refreshtokens.findFirst({
+            where: {
+                token,
+                active: 1
+            },
             include: {
-                refreshtokens: {
-                    where: {
-                        token: token
-                    }
-                }
+                users: true
             }
-        })
+        });
+
+        return record?.users ?? null;
     }
 }
 

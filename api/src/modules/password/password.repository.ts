@@ -1,4 +1,3 @@
-import { Hash } from "node:crypto";
 import { prisma } from "../../infrastructure/database/prisma/prisma.client.js";
 
 class PasswordRepository {
@@ -14,13 +13,13 @@ class PasswordRepository {
         })
     }
 
-    async checkPasswordRecovery(hash: Hash){
+    async checkPasswordRecovery(hash: string){
         const currentTimestamp = Date.now();
         const user = await prisma.users.findFirst({
             where: {
                 passwordrecoverytoken: String(hash),
                 passwordrecoveryexpires: {
-                    lt: new Date(currentTimestamp)
+                    gt: new Date(currentTimestamp)
                 }
             }
         }) 
@@ -34,8 +33,8 @@ class PasswordRepository {
           }, 
           data: {
             password: newPassword,
-            passwordrecoveryexpires: undefined,
-            passwordrecoverytoken: undefined
+            passwordrecoveryexpires: null,
+            passwordrecoverytoken: null
           }
         })
         return;

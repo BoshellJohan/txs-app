@@ -6,17 +6,25 @@ import { LoginDto } from './types/auth.types.js';
 class AuthController {
     async login(req: Request, res: Response){
         const credentials: LoginDto = req.body;
-        return await authService.login(credentials);
+        return res.status(200).json({
+            success: true,
+            data: await authService.login(credentials)
+        }); 
     }
 
     async logout(req: Request, res: Response){
         const { refreshToken } = req.body;
-        return await authService.logout(refreshToken);
+        await authService.logout(refreshToken);
+        return res.sendStatus(204);
     }
 
     async refresh(req: Request, res: Response){
         const { refreshToken } = req.body;
-        return await authService.refresh(refreshToken);    
+        const accessToken = await authService.refresh(refreshToken);    
+        return res.status(200).json({
+            success: true,
+            data: accessToken
+        })
     }
 }
 

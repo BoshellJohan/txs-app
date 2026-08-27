@@ -3,14 +3,16 @@ import passwordService from './password.service.js'
 import {Request, Response} from 'express';
 
 class PasswordController {
-    forgotPassword(req: Request, res: Response){
+    async forgotPassword(req: Request, res: Response){
         const { email } = req.body;
-        return passwordService.forgotPassword(email);
+        await passwordService.forgotPassword(email);
+        return res.sendStatus(204);
     }
 
-    resetPassword(req: Request, res: Response){
+    async resetPassword(req: Request, res: Response){
         const body: ResetPasswordDto = req.body;
-        return passwordService.resetPassword(body);
+        await passwordService.resetPassword(body);
+        return res.sendStatus(204);
     }
 }
 

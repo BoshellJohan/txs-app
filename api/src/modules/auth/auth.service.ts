@@ -37,7 +37,7 @@ class AuthService {
         }
     }
 
-    async logout(token: string){
+    async logout(token: string): Promise<void> {
         try {
             return await authRepository.clearRefreshToken(token);
         } catch(error){
@@ -45,10 +45,10 @@ class AuthService {
         }
     }
 
-    async refresh(token: string){
+    async refresh(token: string): Promise<string> {
         try {
             const user = await authRepository.getUserByRefreshToken(token);
-            if(!user || user.refreshtokens.length == 0) throw new UnauthorizedError('Invalid credentials');
+            if(!user) throw new UnauthorizedError('Invalid credentials');
 
             return jwtUtils.generateAccessToken(user);
         } catch (error){
