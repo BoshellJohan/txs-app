@@ -9,13 +9,15 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 
     if(!token) throw new UnauthorizedError('Invalid token');
 
+    let decoded;
     try {
-        const decoded = jwt.verify(token, process.env.JWT_ACCESS as string);
-        if(!isJWTPayload(decoded)) throw new UnauthorizedError('Invalid or expired token');
-
-        req.user = decoded;
-        next();
+        decoded = jwt.verify(token, process.env.JWT_ACCESS as string);
     } catch (err) {
         throw new UnauthorizedError('Invalid or expired token');
     }
+
+    if(!isJWTPayload(decoded)) throw new UnauthorizedError('Invalid or expired token');
+
+    req.user = decoded;
+    next();
 }
