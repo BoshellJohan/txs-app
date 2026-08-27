@@ -29,17 +29,13 @@ class PasswordService {
     }
 
     async resetPassword(body: ResetPasswordType){
-        try {
-            const hashed = createHash(body.passwordToken);
-            const email = await passwordRepository.checkPasswordRecovery(hashed)
-            if(!email) throw new BadRequestError('Invalid request');
-            
-            const passwordHashed = await hashString(body.newPassword);
-            await passwordRepository.updatePassword(email, passwordHashed);
-            return;
-        } catch (error){
-            throw error;
-        }
+        const hashed = createHash(body.passwordToken);
+        const email = await passwordRepository.checkPasswordRecovery(hashed)
+        if(!email) throw new BadRequestError('Invalid request');
+        
+        const passwordHashed = await hashString(body.newPassword);
+        await passwordRepository.updatePassword(email, passwordHashed);
+        return;
     }
 }
 
