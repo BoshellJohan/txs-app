@@ -28,7 +28,7 @@ class UsersService {
     async signup(body: RegisterType){
         try {
             const resUser = await usersRepository.findByEmail(body.email);
-            if(!resUser) throw new ConflictError('Email already exists');
+            if(resUser) throw new ConflictError('Email already exists');
 
             const hashPassword = await hashString(body.password);
             await usersRepository.createUser(body, hashPassword);

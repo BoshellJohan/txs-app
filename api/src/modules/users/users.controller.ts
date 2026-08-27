@@ -5,29 +5,26 @@ import { RegisterDto } from './dtos/users.dto.js';
 class UsersController {
     async userById(req: Request, res: Response){
         const { id } = req.body;
-        await usersService.getUserById(id)
+        const user = await usersService.getUserById(id)
         return res.status(200).json({
             success: true,
-            
+            data: user,
         })
     }
 
     async userByEmail(req: Request, res: Response){
         const { email } = req.body;
-        try {
-            return await usersService.getUserByEmail(email)
-        } catch (error){
-
-        }
+        const user = await usersService.getUserByEmail(email);
+        return res.status(200).json({
+            success: true,
+            data: user,
+        })
     }
 
     async signup(req: Request, res: Response){
         const credentials: RegisterDto = req.body;
-        try {
-            return await usersService.signup(credentials);
-        } catch (error){
-
-        }
+        await usersService.signup(credentials);
+        return res.status(201).json({success: true});
     }
 }
 
