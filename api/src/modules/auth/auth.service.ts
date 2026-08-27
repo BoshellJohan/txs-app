@@ -5,7 +5,7 @@ import jwtUtils from '../../utils/jwt.utils.js';
 import authRepository from './auth.repository.js';
 import { UnauthorizedError } from '../../common/errors/UnauthorizedError.js';
 import { NotFoundError } from '../../common/errors/NotFoundError.js';
-import { getLogger } from '../../app.js';
+import { getLogger } from '../../common/logger.js';
 
 
 class AuthService {
@@ -15,6 +15,7 @@ class AuthService {
 
             const isValidPassword = await compareHashes(credentials.password, user.password);
             if(!isValidPassword){
+                getLogger().warn({ 'user.id': user.userid }, 'failed login attempt');
                 throw new UnauthorizedError('Invalid credentials or user does not exist');
             }
 
