@@ -10,9 +10,8 @@ import { UnauthorizedError } from "../../common/errors/UnauthorizedError.js";
 class PasswordService {
     async forgotPassword(email: string){
         try {
-            const user = await usersService.getUserByEmail(email);
-            if(!user) throw new UnauthorizedError('Invalid credentials or user not found');
-
+            await usersService.getUserByEmail(email);
+        
             const { token, hash } = generateToken();
             
             const expiresAt = new Date();
@@ -22,6 +21,9 @@ class PasswordService {
             await sendPasswordResetEmail(email, token);
             return;
         } catch (error){
+            if(error instanceof NotFoundError){
+                throw new UnauthorizedError('Invalid credentials or user not found');
+            }
             throw error;
         }
     }

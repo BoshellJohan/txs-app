@@ -4,6 +4,7 @@ import { compareHashes } from '../../utils/bcrypt.js';
 import jwtUtils from '../../utils/jwt.utils.js';
 import authRepository from './auth.repository.js';
 import { UnauthorizedError } from '../../common/errors/UnauthorizedError.js';
+import { NotFoundError } from '../../common/errors/NotFoundError.js';
 
 
 class AuthService {
@@ -27,8 +28,8 @@ class AuthService {
                 refreshToken
             };
 
-        } catch (error: any){
-            if(error.message == 'User not found'){
+        } catch (error){
+            if(error instanceof NotFoundError){
                 throw new UnauthorizedError('Invalid credentials or user not found');
             }
 
