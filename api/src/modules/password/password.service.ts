@@ -5,12 +5,13 @@ import passwordRepository from "./password.repository.js";
 import { ResetPasswordType } from "./types/password.type.js";
 import { NotFoundError } from "../../common/errors/NotFoundError.js";
 import { hashString } from "../../utils/bcrypt.js";
+import { UnauthorizedError } from "../../common/errors/UnauthorizedError.js";
 
 class PasswordService {
     async forgotPassword(email: string){
         try {
             const user = await usersService.getUserByEmail(email);
-            if(!user) throw new NotFoundError('User not found');
+            if(!user) throw new UnauthorizedError('Invalid credentials or user not found');
 
             const { token, hash } = generateToken();
             
