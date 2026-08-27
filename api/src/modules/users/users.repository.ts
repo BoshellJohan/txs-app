@@ -24,6 +24,8 @@ class UsersRepository {
             if(isUniqueConstraintError(error)){
                 throw new ConflictError('Email already registered');
             }
+
+            throw error;
         }
     }
 }
