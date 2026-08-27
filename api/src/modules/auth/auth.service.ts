@@ -3,25 +3,20 @@ import usersService from '../users/users.service.js';
 import { compareHashes } from '../../utils/bcrypt.js';
 import jwtUtils from '../../utils/jwt.utils.js';
 import authRepository from './auth.repository.js';
-import { NotFoundError } from '../../common/errors/NotFoundError.js';
 import { UnauthorizedError } from '../../common/errors/UnauthorizedError.js';
+import { NotFoundError } from '../../common/errors/NotFoundError.js';
 
 
 class AuthService {
     async login(credentials: LoginDto) {
         try {
             const user = await usersService.getUserByEmail(credentials.email);
-    
-            if(!user){
-                throw new NotFoundError('User not found');
-            }
-    
+
             const isValidPassword = await compareHashes(credentials.password, user.password);
-    
             if(!isValidPassword){
-                throw new UnauthorizedError('Invalid credentials');
+                throw new UnauthorizedError('Invalid credentials or user does not exist');
             }
-    
+
             const accessToken = jwtUtils.generateAccessToken(user);
             const refreshToken = jwtUtils.generateRefreshToken(user);
 
@@ -32,28 +27,25 @@ class AuthService {
                 accessToken,
                 refreshToken
             };
+
         } catch (error){
+            if(error instanceof NotFoundError){
+                throw new UnauthorizedError('Invalid credentials or user not found');
+            }
+
             throw error;
         }
     }
 
     async logout(token: string): Promise<void> {
-        try {
-            return await authRepository.clearRefreshToken(token);
-        } catch(error){
-            throw error;
-        }
+        return await authRepository.clearRefreshToken(token);
     }
 
     async refresh(token: string): Promise<string> {
-        try {
-            const user = await authRepository.getUserByRefreshToken(token);
-            if(!user) throw new UnauthorizedError('Invalid credentials');
+        const user = await authRepository.getUserByRefreshToken(token);
+        if(!user) throw new UnauthorizedError('Invalid credentials');
 
-            return jwtUtils.generateAccessToken(user);
-        } catch (error){
-            throw error;
-        }
+        return jwtUtils.generateAccessToken(user);
     }
 }
 

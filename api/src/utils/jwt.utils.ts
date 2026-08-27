@@ -1,5 +1,5 @@
 import jwt, { SignOptions } from 'jsonwebtoken';
-import { UserType } from '../modules/users/user.types.js';
+import { UserType } from '../modules/users/types/users.type.js';
 import { IJwtPayload, IJwtRefreshPayload } from '../types/jwt.type.js';
 
 class JwtUtils {
