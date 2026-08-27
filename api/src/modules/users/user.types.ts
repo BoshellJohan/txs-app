@@ -1,31 +1,24 @@
-export interface UserDB {
-    _id: string;
+export type UserType = {
+    userid: number;
     email: string;
     password: string;
-    name: string;
-    isActive: boolean;
-    role: 'solicitante' | 'inversionista' | 'admin';
-    refreshTokens: {token: string, createdAt: Date}[];
+    role: 'applicant' | 'investor' | 'admin';
     passwordRecoveryToken?: string;
     passwordRecoveryExpires?: Date;
+    refreshTokens?: any;
 }
 
-export interface UserClient {
-    _id: string;
-    email: string;
-    password?: string;
-    name: string;
-    isActive: boolean;
-    role: 'solicitante' | 'inversionista' | 'admin';
-    refreshTokens?: {token: string, createdAt: Date}[];
-    passwordRecoveryToken?: string;
-    passwordRecoveryExpires?: Date;
+export type RefreshTokenType = {
+    refreshTokenId: string;
+    token: string;
+    userId: string;
+    createdAt: Date;
 }
 
 export interface IUserAuth {
     _id: string;
     email: string;
-    role: 'solicitante' | 'inversionista' | 'admin';
+    role: 'applicant' | 'investor' | 'admin';
 }
 
 export interface AddRefreshToken {

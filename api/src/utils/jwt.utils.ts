@@ -1,13 +1,13 @@
 import jwt, { SignOptions } from 'jsonwebtoken';
-import { IJwtPayload, IJwtRefreshPayload, PublicUser } from '../modules/auth/auth.types.js';
+import { UserType } from '../modules/users/user.types.js';
+import { IJwtPayload, IJwtRefreshPayload } from '../types/jwt.type.js';
 
 class JwtUtils {
-    generateAccessToken(user: PublicUser){
+    generateAccessToken(user: UserType){
         const payload: IJwtPayload = {
-            _id: user._id.toString(),
+            _id: user.userid.toString(),
             email: user.email,
-            role: user.role,
-            isActive: user.isActive
+            role: user.role
         }
 
         const secret = process.env.JWT_ACCESS!;
@@ -18,16 +18,16 @@ class JwtUtils {
         return jwt.sign(payload, secret, options);
     }
 
-    generateRefreshToken(user: PublicUser){
+    generateRefreshToken(user: UserType){
         const payload: IJwtRefreshPayload = {
-            _id: user._id.toString(),
+            _id: user.userid.toString(),
             email: user.email
         }
 
         const secret = process.env.JWT_REFRESH!;
 
         const options: SignOptions = {
-            expiresIn: process.env.ACCESS_TOKEN_EXPIRATION as SignOptions['expiresIn']
+            expiresIn: process.env.REFRESH_TOKEN_EXPIRATION as SignOptions['expiresIn']
         }
         
         return jwt.sign(payload, secret, options);
