@@ -1,4 +1,4 @@
-import { IUserAuth } from '../modules/users/user.types';
+import { IJwtPayload } from './jwt.type.js';
 
 declare global {
   namespace Express {
