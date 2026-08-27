@@ -5,6 +5,7 @@ import jwtUtils from '../../utils/jwt.utils.js';
 import authRepository from './auth.repository.js';
 import { UnauthorizedError } from '../../common/errors/UnauthorizedError.js';
 import { NotFoundError } from '../../common/errors/NotFoundError.js';
+import { getLogger } from '../../app.js';
 
 
 class AuthService {
@@ -22,7 +23,7 @@ class AuthService {
 
             const refreshData: AddTokenType = {id: user.userid, token: refreshToken};
             await authRepository.addRefreshToken(refreshData);
-            
+
             return {
                 accessToken,
                 refreshToken
