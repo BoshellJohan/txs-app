@@ -1,10 +1,10 @@
-import { createHash, Hash } from "node:crypto";
-import { generateToken } from "../../utils/cryto.js";
+import { createHash, generateToken } from "../../utils/crypto.js";
 import { sendPasswordResetEmail } from "../mail/mail.service.js";
 import usersService from "../users/users.service.js";
 import passwordRepository from "./password.repository.js";
 import { ResetPasswordType } from "./types/password.type.js";
 import { NotFoundError } from "../../common/errors/NotFoundError.js";
+import { hashString } from "../../utils/bcrypt.js";
 
 class PasswordService {
     async forgotPassword(email: string){
@@ -27,11 +27,12 @@ class PasswordService {
 
     async resetPassword(body: ResetPasswordType){
         try {
-            const hashed: Hash = createHash(body.passwordToken);
+            const hashed = createHash(body.passwordToken);
             const email = await passwordRepository.checkPasswordRecovery(hashed)
             if(!email) throw new NotFoundError('User not found');
             
-            await passwordRepository.updatePassword(email, body.newPassword);
+            const passwordHashed = await hashString(body.newPassword);
+            await passwordRepository.updatePassword(email, passwordHashed);
             return;
         } catch (error){
             throw error;
