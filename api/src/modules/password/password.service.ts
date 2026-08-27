@@ -5,34 +5,34 @@ import passwordRepository from "./password.repository.js";
 import { ResetPasswordType } from "./types/password.type.js";
 import { NotFoundError } from "../../common/errors/NotFoundError.js";
 import { hashString } from "../../utils/bcrypt.js";
-import { UnauthorizedError } from "../../common/errors/UnauthorizedError.js";
+import { BadRequestError } from "../../common/errors/BadRequestError.js";
 
 class PasswordService {
     async forgotPassword(email: string){
         try {
             await usersService.getUserByEmail(email);
-        
-            const { token, hash } = generateToken();
-            
-            const expiresAt = new Date();
-            expiresAt.setMinutes(expiresAt.getMinutes() + 20);
-
-            await passwordRepository.updatePasswordRecovery(email, hash, expiresAt);
-            await sendPasswordResetEmail(email, token);
-            return;
         } catch (error){
             if(error instanceof NotFoundError){
-                throw new UnauthorizedError('Invalid credentials or user not found');
+                return;
             }
             throw error;
         }
+
+        const { token, hash } = generateToken();
+            
+        const expiresAt = new Date();
+        expiresAt.setMinutes(expiresAt.getMinutes() + 20);
+
+        await passwordRepository.updatePasswordRecovery(email, hash, expiresAt);
+        await sendPasswordResetEmail(email, token);
+        return;
     }
 
     async resetPassword(body: ResetPasswordType){
         try {
             const hashed = createHash(body.passwordToken);
             const email = await passwordRepository.checkPasswordRecovery(hashed)
-            if(!email) throw new NotFoundError('User not found');
+            if(!email) throw new BadRequestError('Invalid request');
             
             const passwordHashed = await hashString(body.newPassword);
             await passwordRepository.updatePassword(email, passwordHashed);
