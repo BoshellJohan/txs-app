@@ -6,37 +6,41 @@ import authRepository from './auth.repository.js';
 import { UnauthorizedError } from '../../common/errors/UnauthorizedError.js';
 import { NotFoundError } from '../../common/errors/NotFoundError.js';
 import { getLogger } from '../../common/logger.js';
-
+import { tracer } from '../../common/tracer.js';
 
 class AuthService {
     async login(credentials: LoginDto) {
-        try {
-            const user = await usersService.getUserByEmail(credentials.email);
-
-            const isValidPassword = await compareHashes(credentials.password, user.password);
-            if(!isValidPassword){
-                getLogger().warn({ 'user.id': user.userid }, 'failed login attempt');
-                throw new UnauthorizedError('Invalid credentials or user does not exist');
+        return tracer.startActiveSpan('Operación: Iniciar sesión', async (span) => {
+            try {
+                const user = await usersService.getUserByEmail(credentials.email);
+    
+                const isValidPassword = await compareHashes(credentials.password, user.password);
+                if(!isValidPassword){
+                    getLogger().warn({ 'user.id': user.userid }, 'failed login attempt');
+                    throw new UnauthorizedError('Invalid credentials or user does not exist');
+                }
+    
+                const accessToken = jwtUtils.generateAccessToken(user);
+                const refreshToken = jwtUtils.generateRefreshToken(user);
+    
+                const refreshData: AddTokenType = {id: user.userid, token: refreshToken};
+                await authRepository.addRefreshToken(refreshData);
+    
+                return {
+                    accessToken,
+                    refreshToken
+                };
+    
+            } catch (error){
+                if(error instanceof NotFoundError){
+                    throw new UnauthorizedError('Invalid credentials or user not found');
+                }
+    
+                throw error;
+            } finally {
+                span.end();
             }
-
-            const accessToken = jwtUtils.generateAccessToken(user);
-            const refreshToken = jwtUtils.generateRefreshToken(user);
-
-            const refreshData: AddTokenType = {id: user.userid, token: refreshToken};
-            await authRepository.addRefreshToken(refreshData);
-
-            return {
-                accessToken,
-                refreshToken
-            };
-
-        } catch (error){
-            if(error instanceof NotFoundError){
-                throw new UnauthorizedError('Invalid credentials or user not found');
-            }
-
-            throw error;
-        }
+        });
     }
 
     async logout(token: string): Promise<void> {
