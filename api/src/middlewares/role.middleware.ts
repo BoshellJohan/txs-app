@@ -1,13 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
+import { ForbiddenError } from '../common/errors/ForbiddenError.js';
 
 export const roleMiddleware = (...allowedRoles: string[]) => {
     return (req: Request, res: Response, next: NextFunction) => {
         if(!req.user){
-            return res.status(500).json({success: false, message: 'UserModel not loaded'});
+            throw new Error;
         }
 
         if(!allowedRoles.includes(req.user.role)){
-            return res.status(403).json({success: false, message: 'Forbidden'});
+            throw new ForbiddenError('User does not have enough permissions');
         }
 
         next();
