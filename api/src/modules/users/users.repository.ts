@@ -5,11 +5,30 @@ import { RegisterType } from "./types/users.type.js";
 
 class UsersRepository {
     async findByEmail(email: string){
-        return await prisma.users.findUnique({where: {email: email}});
+        return await prisma.users.findUnique(
+            {
+                where: {email: email},
+                select: {
+                    userid: true,
+                    email: true,
+                    role: true,
+                    password: true
+                }
+            }
+        );
     }
 
     async findById(id: number){
-        return await prisma.users.findUnique({where: {userid: id}});
+        return await prisma.users.findUnique(
+            {
+                where: {userid: id},
+                select: {
+                    userid: true,
+                    email: true,
+                    role: true
+                }
+            }
+        );
     }
 
     async createUser(body: RegisterType, hashPassword: string){
