@@ -6,26 +6,28 @@ import { ResetPasswordType } from "./types/password.type.js";
 import { NotFoundError } from "../../common/errors/NotFoundError.js";
 import { hashString } from "../../utils/bcrypt.js";
 import { BadRequestError } from "../../common/errors/BadRequestError.js";
+import { getLogger } from "../../common/logger.js";
 
 class PasswordService {
     async forgotPassword(email: string){
         try {
             await usersService.getUserByEmail(email);
+            const { token, hash } = generateToken();
+            
+            const expiresAt = new Date();
+            expiresAt.setMinutes(expiresAt.getMinutes() + 20);
+
+            await passwordRepository.updatePasswordRecovery(email, hash, expiresAt);
+            await sendPasswordResetEmail(email, token);
+            return;
         } catch (error){
             if(error instanceof NotFoundError){
                 return;
             }
-            throw error;
+
+            getLogger().error({ err: error }, 'failed to process forgot password request');
+            return;
         }
-
-        const { token, hash } = generateToken();
-            
-        const expiresAt = new Date();
-        expiresAt.setMinutes(expiresAt.getMinutes() + 20);
-
-        await passwordRepository.updatePasswordRecovery(email, hash, expiresAt);
-        await sendPasswordResetEmail(email, token);
-        return;
     }
 
     async resetPassword(body: ResetPasswordType){
