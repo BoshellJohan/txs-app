@@ -21,6 +21,8 @@ class UsersController {
 
     async userById(req: Request, res: Response){
         const id = Number(req.params.id);
+        if(Number.isNaN(id)) throw new BadRequestError('Invalid user id');
+        
         const user = await usersService.getUserById(id)
         return res.status(200).json({
             success: true,
