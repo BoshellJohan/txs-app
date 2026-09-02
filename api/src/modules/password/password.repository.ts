@@ -1,8 +1,8 @@
-import { prisma } from "../../infrastructure/database/prisma/prisma.client.js";
+import { getDb } from "../../common/database.js";
 
 class PasswordRepository {
     async updatePasswordRecovery(email: string, hash: string, expiresAt: Date){
-        await prisma.users.update({
+        await getDb().users.update({
             where: {
                 email: email
             },
@@ -15,7 +15,7 @@ class PasswordRepository {
 
     async checkPasswordRecovery(hash: string){
         const currentTimestamp = Date.now();
-        const user = await prisma.users.findFirst({
+        const user = await getDb().users.findFirst({
             where: {
                 passwordrecoverytoken: String(hash),
                 passwordrecoveryexpires: {
@@ -27,7 +27,7 @@ class PasswordRepository {
     }
 
     async updatePassword(email: string, newPassword: string){
-        await prisma.users.update({
+        await getDb().users.update({
           where: {
             email: email,
           }, 

@@ -1,9 +1,9 @@
-import { prisma } from "../../infrastructure/database/prisma/prisma.client.js";
+import { getDb } from "../../common/database.js";
 import { AddTokenType } from "./types/auth.types.js";
 
 class AuthRepository {
     async addRefreshToken(body: AddTokenType){
-        return await prisma.refreshtokens.create({
+        return await getDb().refreshtokens.create({
             data: {
                 token: body.token,
                 createdat: new Date(),
@@ -15,7 +15,7 @@ class AuthRepository {
     }
 
     async clearRefreshToken(token: string){
-        await prisma.refreshtokens.updateMany({
+        await getDb().refreshtokens.updateMany({
             where: {
                 token: token
             },
@@ -27,7 +27,7 @@ class AuthRepository {
     }
 
     async getUserByRefreshToken(token: string){
-        const record = await prisma.refreshtokens.findFirst({
+        const record = await getDb().refreshtokens.findFirst({
             where: {
                 token,
                 active: 1
