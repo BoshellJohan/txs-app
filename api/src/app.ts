@@ -20,7 +20,7 @@ app.use(cors({
 
 app.use(express.json());
 
-app.set('trust_proxy', 1);
+app.set('trust proxy', 1);
 
 app.use((req, res, next) => {
     const start = performance.now();
