@@ -58,7 +58,7 @@ describe('POST /auth/login', () => {
             const exist = await getDb().refreshtokens.findFirst({
                 where: {
                     userid: user.userid,
-                    token: response.body.refreshToken
+                    token: response.body.data.refreshToken
                 }
             });
 
