@@ -65,7 +65,7 @@ class AuthService {
         
             if(!response?.users) throw new UnauthorizedError('Invalid credentials');
 
-            const decodedPayload = jwtUtils.verifyJwtToken(response.token);
+            jwtUtils.verifyJwtToken(response.token);
             return jwtUtils.generateAccessToken(response.users);
         } catch (error) {
             if(error instanceof jsonwebtoken.JsonWebTokenError){
