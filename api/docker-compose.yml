@@ -7,3 +7,29 @@ services:
       - "4317:4317"
       - "4318:4318"
     restart: unless-stopped
+
+  backend1:
+    build: .
+    container_name: backend1
+    env_file: ./.env
+
+  backend2:
+    build: .
+    container_name: backend2
+    env_file: ./.env
+
+  backend3:
+    build: .
+    container_name: backend3
+    env_file: ./.env
+
+  nginx: 
+    image: nginx:latest
+    container_name: nginx
+    ports: ["80:80"]
+    volumes:
+      - type: bind
+        source: ./nginx.conf
+        target: /etc/nginx/nginx.conf
+        read_only: true
+    restart: always
