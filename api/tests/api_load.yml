@@ -1,0 +1,42 @@
+config:
+  target: http://localhost:80
+  phases:
+    - duration: 30
+      arrivalRate: 10
+      name: Baseline
+
+    - duration: 30
+      arrivalRate: 25
+      name: Low load
+
+    - duration: 30
+      arrivalRate: 50
+      name: Medium load
+
+    - duration: 30
+      arrivalRate: 100
+      name: High load
+
+    - duration: 30
+      arrivalRate: 200
+      name: Stress
+  plugins: 
+    ensure: {}
+    expect: {}
+  ensure:
+    thresholds:
+      - http.response_time.max: 1000
+    conditions:
+      - expression: "http.codes.200 + http.codes.201 == http.requests"
+scenarios: 
+  - flow:
+    - get:
+        url: "/users"
+    # - post:
+    #     url: "/users/register"
+    #     json:
+    #       email: "loadtest-{{ $uuid }}@example.com"
+    #       password: "Test{{ $randomNumber(100000, 999999) }}!"
+        
+    #     expect: 
+    #       - statusCode: 201

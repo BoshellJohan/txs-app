@@ -20,6 +20,8 @@ app.use(cors({
 
 app.use(express.json());
 
+app.set('trust proxy', 1);
+
 app.use((req, res, next) => {
     const start = performance.now();
     const requestId = (req.headers['x-request-id'] as string) ?? randomUUID();

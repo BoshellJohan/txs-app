@@ -5,6 +5,12 @@ import { NotFoundError } from '../../common/errors/NotFoundError.js';
 import { ConflictError } from '../../common/errors/ConflictError.js';
 
 class UsersService {
+    async getUsers(){
+        const users = await usersRepository.findAll();
+        if(!users) throw new NotFoundError('Users not found');
+        return users;
+    }
+
     async getUserByEmail(email: string){
         const user = await usersRepository.findByEmail(email);
         if(!user) throw new NotFoundError('User not found');

@@ -4,6 +4,16 @@ import { isUniqueConstraintError } from "../../infrastructure/database/prisma/pr
 import { RegisterType } from "./types/users.type.js";
 
 class UsersRepository {
+    async findAll(){
+        return await getDb().users.findMany({
+            select: {
+                userid: true,
+                email: true,
+                role: true
+            }
+        });
+    }
+
     async findByEmail(email: string){
         return await getDb().users.findUnique(
             {
