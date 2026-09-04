@@ -7,6 +7,7 @@ class AuthRepository {
             data: {
                 token: body.token,
                 createdat: new Date(),
+                expiresat: body.expiresAt,
                 users: {
                     connect: {userid: body.id}
                 }
@@ -30,14 +31,14 @@ class AuthRepository {
         const record = await getDb().refreshtokens.findFirst({
             where: {
                 token,
-                active: 1
+                active: 1,
             },
             include: {
                 users: true
             }
         });
 
-        return record?.users ?? null;
+        return record?.users ? record : null;
     }
 }
 

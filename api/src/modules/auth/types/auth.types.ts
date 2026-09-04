@@ -6,4 +6,5 @@ export type LoginDto = {
 export type AddTokenType = {
     token: string;
     id: number;
+    expiresAt: Date;
 }

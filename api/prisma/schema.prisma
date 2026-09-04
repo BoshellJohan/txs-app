@@ -12,8 +12,9 @@ datasource db {
 model refreshtokens {
   refreshtokenid Int       @id @default(autoincrement())
   userid         Int
-  token          String    @db.VarChar(200)
+  token          String    @db.VarChar(210)
   createdat      DateTime? @default(now()) @db.Timestamp(6)
+  expiresat      DateTime? @db.Timestamptz
   active         Int?      @default(1) @db.SmallInt
   users          users     @relation(fields: [userid], references: [userid], onDelete: NoAction, onUpdate: NoAction, map: "fk_users_userid")
 }
