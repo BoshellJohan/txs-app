@@ -12,7 +12,7 @@ datasource db {
 model refreshtokens {
   refreshtokenid Int       @id @default(autoincrement())
   userid         Int
-  token          String    @db.VarChar(210)
+  token          String    @db.VarChar(2048)
   createdat      DateTime? @default(now()) @db.Timestamp(6)
   expiresat      DateTime? @db.Timestamptz
   active         Int?      @default(1) @db.SmallInt
@@ -22,10 +22,10 @@ model refreshtokens {
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model users {
   userid                  Int             @id @default(autoincrement())
-  email                   String          @unique @db.VarChar(40)
+  email                   String          @unique @db.VarChar(80)
   password                String          @db.VarChar(70)
   role                    roletype        @default(applicant)
-  passwordrecoverytoken   String?         @db.VarChar(200)
+  passwordrecoverytoken   String?         @db.VarChar(2048)
   passwordrecoveryexpires DateTime?       @db.Timestamptz
   active                  Int?            @default(1) @db.SmallInt
   createdat               DateTime?       @default(now()) @db.Timestamp(6)
