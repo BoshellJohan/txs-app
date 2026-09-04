@@ -11,9 +11,9 @@ describe('POST /auth/logout', () => {
             const { password } = await createTestUser();
             const responseLogin = await request(app).post('/auth/login').send({email, password});
   
-            const responseLogout = await request(app).post('/auth/logout').send({refreshToken: responseLogin.body.refreshToken});
+            const responseLogout = await request(app).post('/auth/logout').send({refreshToken: responseLogin.body.data.refreshToken});
 
-            const responseRefresh = await request(app).post('/auth/refresh').send({refreshToken: responseLogin.body.refreshToken});
+            const responseRefresh = await request(app).post('/auth/refresh').send({refreshToken: responseLogin.body.data.refreshToken});
 
             expect(responseLogout.statusCode).toBe(204);
             expect(responseRefresh.statusCode).toBe(401);

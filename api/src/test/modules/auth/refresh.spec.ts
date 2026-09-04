@@ -22,7 +22,7 @@ describe('POST /auth/refresh', () => {
     });
 
     it('refresh token inexistente o inválido, retorna error 401', async () => {
-        withTestTransaction(async () => {
+        await withTestTransaction(async () => {
             const response = await request(app).post('/auth/refresh').send({refreshToken: 'token-invalido'});
             
             expect(response.statusCode).toBe(401);

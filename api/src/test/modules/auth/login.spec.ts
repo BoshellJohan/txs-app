@@ -50,7 +50,7 @@ describe('POST /auth/login', () => {
     });
 
     it('el refresh token devuelto se guardó correctamente en la base de datos', async () => {
-        withTestTransaction(async () => {
+        await withTestTransaction(async () => {
             const email = 'test@gmail.com';
             const { user, password } = await createTestUser({email});
             
@@ -63,7 +63,7 @@ describe('POST /auth/login', () => {
             });
 
             expect(response.statusCode).toBe(200);
-            expect(exist).toBeDefined();
+            expect(exist).not.toBeNull();
         });
     });
 });
