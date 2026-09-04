@@ -12,16 +12,19 @@ services:
     build: .
     container_name: backend1
     env_file: ./.env
+    restart: unless-stopped
 
   backend2:
     build: .
     container_name: backend2
     env_file: ./.env
+    restart: unless-stopped
 
   backend3:
     build: .
     container_name: backend3
     env_file: ./.env
+    restart: unless-stopped
 
   nginx: 
     image: nginx:latest
