@@ -5,7 +5,13 @@ import { RegisterType } from "./types/users.type.js";
 
 class UsersRepository {
     async findAll(){
-        return await getDb().users.findMany();
+        return await getDb().users.findMany({
+            select: {
+                userid: true,
+                email: true,
+                role: true
+            }
+        });
     }
 
     async findByEmail(email: string){
