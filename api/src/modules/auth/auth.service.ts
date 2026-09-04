@@ -8,6 +8,7 @@ import { NotFoundError } from '../../common/errors/NotFoundError.js';
 import { getLogger } from '../../common/logger.js';
 import { tracer } from '../../common/tracer.js';
 import { SpanStatusCode } from '@opentelemetry/api';
+import jsonwebtoken from 'jsonwebtoken';
 
 class AuthService {
     async login(credentials: LoginDto) {
@@ -24,8 +25,10 @@ class AuthService {
                 span.setAttribute('userid', user.userid);
                 const accessToken = jwtUtils.generateAccessToken(user);
                 const refreshToken = jwtUtils.generateRefreshToken(user);
-    
-                const refreshData: AddTokenType = {id: user.userid, token: refreshToken};
+                const expiresAt = new Date();
+                expiresAt.setDate(expiresAt.getDate() + 8);
+                
+                const refreshData: AddTokenType = {id: user.userid, token: refreshToken, expiresAt};
                 await authRepository.addRefreshToken(refreshData);
     
                 return {
@@ -57,10 +60,20 @@ class AuthService {
     }
 
     async refresh(token: string): Promise<string> {
-        const user = await authRepository.getUserByRefreshToken(token);
-        if(!user) throw new UnauthorizedError('Invalid credentials');
+        try {
+            const response = await authRepository.getUserByRefreshToken(token);
+        
+            if(!response?.users) throw new UnauthorizedError('Invalid credentials');
 
-        return jwtUtils.generateAccessToken(user);
+            const decodedPayload = jwtUtils.verifyJwtToken(response.token);
+            return jwtUtils.generateAccessToken(response.users);
+        } catch (error) {
+            if(error instanceof jsonwebtoken.JsonWebTokenError){
+                throw new UnauthorizedError('Invalid token');
+            }
+            
+            throw error;
+        }
     }
 }
 

@@ -1,4 +1,4 @@
-import jwt, { SignOptions } from 'jsonwebtoken';
+import jwt, { SignOptions, VerifyOptions } from 'jsonwebtoken';
 import { UserType } from '../modules/users/types/users.type.js';
 import { IJwtPayload, IJwtRefreshPayload } from '../types/jwt.type.js';
 
@@ -31,6 +31,11 @@ class JwtUtils {
         }
         
         return jwt.sign(payload, secret, options);
+    }
+
+    verifyJwtToken(token: string){
+        const secret = process.env.JWT_REFRESH!;
+        return jwt.verify(token, secret);
     }
 }
 
